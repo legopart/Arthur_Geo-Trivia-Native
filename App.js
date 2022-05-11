@@ -26,11 +26,9 @@ return (
     <View style={addValue.button}><Button title='x' onPress={() => handlePressX(allVars)}  /></View>
   </View>
 
-
-
   <ScrollView style={buttonSet.scrollView}>
     {
-      arr.map(({id, text, marked}, i) => (<>
+      arr.map(({id, text, marked}, i) => (
         <View key={id} style={[buttonSet.border, marked ? buttonSet.marked: null]}>
           <View style={buttonSet.text}>
             <Text>{text}</Text>
@@ -43,7 +41,7 @@ return (
             <View style={buttonSet.button}><Button title='UnMark' onPress={() => handleUnMark(allVars, id)} /></View>
           </View>
         </View>  
-      </>) )
+      ) )
     }
 
   </ScrollView>
