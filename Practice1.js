@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState, useRef,  useEffect } from 'react';
+import React, { useState, useRef,  useEffect } from 'react';
 import { Alert ,StyleSheet, Text, View, Button } from 'react-native';
 import { Input } from './Tags'
+
 
 
 export default function App() {

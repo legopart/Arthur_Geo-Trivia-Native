@@ -1,9 +1,8 @@
-import React, { useState, useRef,  useEffect } from 'react';
+import { useState, useRef,  useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Text, View, Button} from 'react-native';
 import { Platform, StatusBar as StatusBarAndroid, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import { Input } from './Tags'
-import { NativeBaseProvider, Box } from "native-base";
 
 export default function App() {
 
@@ -21,11 +20,6 @@ return (
   
 <Text>Top Text</Text>
   
-   <NativeBaseProvider>
-      <Box>Hello world</Box>
-    </NativeBaseProvider>
-
-
   <View style={addValue.container}>
     <Input ref={inputRef} placeholder="input" style={addValue.input}></Input>
     <View style={addValue.button}><Button onPress={editMode !== undefined? () => handleEditValue(allVars): () => handleAddValue(allVars)} title={editMode !== undefined ? 'Edit Item': 'Add Item'}  /></View>
