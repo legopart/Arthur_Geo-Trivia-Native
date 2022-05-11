@@ -1,15 +1,22 @@
+import { useState, useRef,  useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Text, View, Button} from 'react-native';
 import { Platform, StatusBar as StatusBarAndroid, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import  {useState} from 'react';
 import { Input } from './Tags'
 
 export default function App() {
 
-
+  const editModeRef = useRef(false);
+  const inputRef = useRef();
   const [arr,setArr]=useState([]);
 
   const [txt,setTxt]=useState('');
+
+function handlePressX(){
+  editModeRef.current = false;
+  inputRef.current.empty();
+}
+
   return (
 <SafeAreaView style={styles.preContainer}>
 <StatusBar style="auto" />
@@ -17,8 +24,9 @@ export default function App() {
 <Text>Top Text</Text>
   
   <View style={addValue.container}>
-    <Input placeholder="input" style={addValue.input}>1212</Input>
-    <View style={addValue.button}><Button title='Add'  /></View>
+    <Input ref={inputRef} placeholder="input" style={addValue.input}>1212</Input>
+    <View style={addValue.button}><Button title={editModeRef.current ? 'edit': 'Add'}  /></View>
+    <View style={addValue.button}><Button title='x' onPress={handlePressX}  /></View>
   </View>
 
 
@@ -42,11 +50,11 @@ export default function App() {
 }
 
 const addValue = StyleSheet.create({
-  scrollView: { }
+  scrollView: {  }
   , text: { alignItems: 'center' }
-  , container: { flexDirection: 'row', justifyContent: 'center' , alignItems: 'center'}
+  , container: { padding: 3, flexDirection: 'row', justifyContent: 'center' , alignItems: 'center'}
   , input: {  margin: 2, width: '40%' }
-  , button: {  margin: 2, width: 'auto' }
+  , button: {  margin: 2, marginLeft: 4, width: 'auto' }
 });
 
 const buttonSet = StyleSheet.create({

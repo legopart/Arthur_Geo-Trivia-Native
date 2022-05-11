@@ -6,6 +6,8 @@ const Input = forwardRef( ({placeholder, onSubmit, style, children, ...props}, r
   const textInputRef = useRef(null);
   useImperativeHandle (ref, () => ({
     getValue: () => value
+    ,setValue: (val) => setValue(val)
+    ,empty: () => setValue('')
     , getNumber: () => Number(value)
     , focus: () => textInputRef.current?.focus()
   }));
