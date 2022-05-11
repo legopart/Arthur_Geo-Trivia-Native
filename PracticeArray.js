@@ -1,14 +1,16 @@
-import { useState, useRef,  useEffect } from 'react';
+import React, { useState, useRef,  useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, Button} from 'react-native';
+import { Text, View, Button, KeyboardAvoidingView} from 'react-native';
 import { Platform, StatusBar as StatusBarAndroid, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import { Input } from './Tags'
+import { NativeBaseProvider, Box } from "native-base";
+
 
 export default function App() {
 
   const [editMode, setEditMode] = useState(undefined);
   const inputRef = useRef();
-  const countRef = useRef(3);
+  const countRef = useRef(0);
   const [arr, setArr]=useState([ ]);
 
   const allVars = {editMode, setEditMode, inputRef, countRef, arr, setArr};
@@ -16,10 +18,12 @@ export default function App() {
 return (
 <SafeAreaView style={styles.preContainer}>
 <StatusBar style="auto" />
-<View style={styles.container}>
-  
+<KeyboardAvoidingView style={styles.container}>
+    
 <Text>Top Text</Text>
   
+  <View style={styles.container}>{/*Centralize The Item */}</View>
+
   <View style={addValue.container}>
     <Input ref={inputRef} placeholder="input" style={addValue.input}></Input>
     <View style={addValue.button}><Button onPress={editMode !== undefined? () => handleEditValue(allVars): () => handleAddValue(allVars)} title={editMode !== undefined ? 'Edit Item': 'Add Item'}  /></View>
@@ -48,7 +52,7 @@ return (
 
   
   <Text>Bottom Text</Text>
-{/*End Container */}</View>
+</KeyboardAvoidingView>
 </SafeAreaView>);
 }
 
@@ -93,7 +97,7 @@ function handlePressX(allVars){
 function handleAddValue(allVars){
   const {inputRef, countRef, arr, setArr} = allVars;
   const value = inputRef.current?.getValue();
-  if(value.trim() === '') return;
+  if(value?.trim() || '' === '') return;
   const component = arrConstructor(countRef.current++, value)
   const arrayClone = JSON.parse(JSON.stringify( arr ));
   arrayClone.push( component );
