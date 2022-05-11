@@ -1,70 +1,70 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState, useRef,  useEffect } from 'react';
-import { Alert ,StyleSheet, Text, View, Button } from 'react-native';
+import { Text, View, Button} from 'react-native';
+import { Platform, StatusBar as StatusBarAndroid, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import  {useState} from 'react';
 import { Input } from './Tags'
 
-
 export default function App() {
-  const [border, setBorder] = useState(1);
 
-  function handlePressExtendBorder(){setBorder(border+1)}
 
-  function handleButtonResult(){
-    const value1 = input1Ref.current?.getNumber();
-    const value2 = input2Ref.current?.getNumber();
-    const value3 = input3Ref.current?.getNumber();
-    const result = value1 + value2 + value3;
-    Alert.alert('Result', `${result}`)
-  }
-  const input1Ref = useRef();
-  const input2Ref = useRef();
-  const input3Ref = useRef();
-  useEffect(() => {
-    input1Ref?.current?.focus()
-  }, [])
+  const [arr,setArr]=useState([]);
+
+  const [txt,setTxt]=useState('');
   return (
-    <View style={styles.container}>
+<SafeAreaView style={styles.preContainer}>
+<StatusBar style="auto" />
+<View style={styles.container}>
+<Text>Top Text</Text>
+  
+  <View style={addValue.container}>
+    <Input placeholder="input" style={addValue.input}>1212</Input>
+    <View style={addValue.button}><Button title='Add'  /></View>
+  </View>
 
-    <View>
-      <Input keyboardType="number-pad" ref={input1Ref} onSubmit={() => input2Ref.current?.focus() } ></Input>
-      <Text>+</Text>
-      <Input keyboardType="number-pad" ref={input2Ref} onSubmit={() => input3Ref.current?.focus() }></Input>
-      <Text>+</Text>
-      <Input kReyboardType="number-pad" ref={input3Ref}></Input>
-      <Button title='Result' onPress={handleButtonResult}></Button>
+
+  <ScrollView style={buttonSet.scrollView}>
+    <View style={[buttonSet.border/*, buttonSet.marked*/]}>
+      <View style={buttonSet.text}>
+        <Text>dfdf</Text>
+      </View>
+      <View style={buttonSet.container}>
+        <View style={buttonSet.button}><Button title='Top'  /></View>
+        <View style={buttonSet.button}><Button title='Edit'  /></View>
+        <View style={buttonSet.button}><Button title='Delete'  /></View>
+        <View style={buttonSet.button}><Button title='Mark'  /></View>
+        <View style={buttonSet.button}><Button title='UnMark'  /></View>
+      </View>
     </View>
-    <View><Text>{" "}</Text></View>
-      <View style={borderElementStyle(border)}>
-        <Text>
-          {border}{" "}Border extended By button click</Text></View>
-
-      <Button title='Extend the border' onPress={handlePressExtendBorder}></Button>
-
-    </View>
-  );
+  </ScrollView>
+  <Text>Bottom Text</Text>
+{/*End Container */}</View>
+</SafeAreaView>);
 }
 
-const borderElementStyle = (x) => StyleSheet.create({
-  borderWidth:  x
-  , borderColor: '#555'
-  , borderStyle: 'solid'
-  , backgroundColor: '#f00'
+const addValue = StyleSheet.create({
+  scrollView: { }
+  , text: { alignItems: 'center' }
+  , container: { flexDirection: 'row', justifyContent: 'center' , alignItems: 'center'}
+  , input: {  margin: 2, width: '40%' }
+  , button: {  margin: 2, width: 'auto' }
 });
 
+const buttonSet = StyleSheet.create({
+  scrollView: { }
+  , border: { borderWidth: 1, borderColor: 'black', borderStyle: 'solid', borderRadius: 4, padding: 5}
+  , marked: { borderWidth: 2, borderColor: 'red' }
+  , text: { alignItems: 'center', padding: 3 }
+  , container: { flexDirection: 'row', justifyContent: 'center' , alignItems: 'center'}
+  , button: {  margin: 2 }
+});
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  preContainer: {
+    flex: 1 , paddingTop: Platform.OS == "android" ? StatusBarAndroid.currentHeight : 0
+    , backgroundColor: 'azure'
+  }
+  ,container: { 
+    flex: 1 , margin: 2, backgroundColor: 'white'
+    , alignItems: 'center', justifyContent: 'center'  //not works if another component using flex: 1
+  }
 });
-
-
-
-
-
-
-
-
