@@ -1,131 +1,135 @@
 import React, { useState, useRef,  useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 
-import { Platform, StatusBar as StatusBarAndroid, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import { Text, View,  KeyboardAvoidingView} from 'react-native';
+import { Platform, StatusBar as StatusBarAndroid, SafeAreaView, StyleSheet, ViewPagerAndroidBase } from 'react-native';
+import { Text as NativeText, View as NativeView,  KeyboardAvoidingView} from 'react-native';
 
 import { Input } from './Tags'
 
-import {AntDesign, Ionicons, Zocial, FontAwesome, MaterialIcons  } from '@expo/vector-icons';
+import {AntDesign, Ionicons, Zocial, FontAwesome, MaterialIcons, Entypo  } from '@expo/vector-icons';
 
 import axios from 'axios';
 
-
-
-
 import { 
-  Heading, Flex,Center, NativeBaseProvider, Box, Spacer , Button, Icon
-, Image
+  ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Image
+  , NativeBaseProvider
 } 
 from "native-base";
+import {LinearGradient} from 'expo-linear-gradient';
 
 const GITHUB_API = 'https://api.github.com/users';
 const DATABASE = 'https://w3arthurdb-default-rtdb.firebaseio.com/users.json';
 
+
 export default function App() {
-  
-  const [user, setUser]=useState([ ]);
+  const [user, setUser]=useState();
   const [userArr, setUserArr]=useState([ ]);
-  const userNameRef = useRef()
+  const userNameRef = useRef();
 
-
-
-  function handleGithubSearch(userName = userNameRef.current.getValue()){ errorHandler(async() =>{
-        const response = await axios.get(GITHUB_API + '/' + userName);
-
-        setUser(response.data); 
-
-
- 
-
-  } ); }
-
-  function handleSave(){ errorHandler(async() =>{
-      const data = user;
-      const response = await axios.post(DATABASE, data);
-  } ); }
-
-  function handleGetAllSearches(){ errorHandler(async() =>{
-      const response = await axios.get(DATABASE);
-      const array = [];
-      for (const [key, value] of Object.entries(response.data)) {
-        const val = {key: key,...value};
-        array.push(val);
-      }
-      setUserArr(array);
-  } ); }
-
-
+  const allVars = {user, setUser, userArr, setUserArr, userNameRef};
 
   useEffect(() => {
-    handleGithubSearch('w3arthur')
+    handleGithubSearch(allVars, 'w3arthur');
+    handleGetAllSearches(allVars);
+    userNameRef.current?.focus();
   }, []);
 
-
-
-
-  const [imageDisplay, setImageDisplay] = useState(true);
-
-
 return (
-<SafeAreaView style={styles.globalContainer}>
-<StatusBar style="auto" />
-<KeyboardAvoidingView style={styles.preContainer}>
-<View style={styles.container}>
-  <Text>© Arthur Zarankin</Text>
-<NativeBaseProvider><ScrollView>
-
-
-
+<SafeAreaView style={styles.globalContainer}><StatusBar style="auto" /><KeyboardAvoidingView style={styles.preContainer}><NativeView style={styles.container}>
+<NativeText>© Arthur Zarankin</NativeText>
+<NativeBaseProvider config={globalStyleConfig}><ScrollView>
+  <Box p={2} style={{borderRadius: 3}} bg={gradientBackground}>
 <Center>
-  <AntDesign name="user" size={40} color="black" />
+  <AntDesign name="user" size={40} color='#06B6D4' />
   <Heading size="md"> GitHub Finder</Heading>
 </Center>
-
-
-<Flex direction="row" mb="2" style={{width:'100%',}}>
-          
-    <Button m={1} variant="subtle" leftIcon={<Icon as={Ionicons} name="cloud-upload-outline" size="lg" />} onPress={() => { handleSave(); } }>Save to Database </Button>      
-    <Button m={1} variant="outline" leftIcon={<Icon as={Ionicons} name="cloud-upload-outline" size="lg" />} onPress={() => {  } }>Save to Local </Button> 
-
-          </Flex>
-<Spacer />
-
-
-
-  
-    <Box><Input placeholder='Please insert the user name' ref={userNameRef} ></Input></Box>
-    <Box><Button size='lg' colorScheme="primary" leftIcon={<Icon as={MaterialIcons} name="person-search" size="lg" />} onPress={() => { handleGithubSearch(); } }>Search UserName</Button></Box>
+</Box>
+<Box><Input  style={{borderColor: 'red', borderWidth: 0, borderRadius:3 }} label='Github User Name' placeholder='Github Username' ref={userNameRef} ></Input></Box>
+<Box><Button size='lg' colorScheme="primary" leftIcon={<Icon as={MaterialIcons} name="person-search" size="lg" />} onPress={() => { handleGithubSearch(allVars); } }>Search UserName</Button></Box>
 <Spacer />
 
 <Center m={2}>
-  <View><Image size="xl" alt={user?.login} style={[image.container]} source={{uri: user?.avatar_url}} /></View>
-  <Heading size="md">{user?.login}</Heading>
+  <NativeView><Image size="lg" alt={user?.login || 'user profile image'} style={[image.container]} source={{uri: user?.avatar_url}} /></NativeView>
+  <Heading size="md">{user?.login || '*no user found'}</Heading>
 </Center>
 
+  <Spacer  />
+
+{
+  user ? (<>
+  <Flex direction="row" mb="2" style={{width:'100%',}}>
+    <Button m={1} variant="subtle" leftIcon={<Icon as={Ionicons} name="cloud-upload-outline" size="lg" />} onPress={() => { handleSave(allVars); } }>Save to Database </Button>      
+    <Button m={1} variant="outline" leftIcon={<Icon as={FontAwesome} name="save" size="lg" />} onPress={() => {  } }>Save to Local </Button> 
+  </Flex>
   <Spacer />
+  </>)
+    : null
+}
+  <Spacer  />
 
-<Center rounded="xs"  shadow={1}>
-sds
+<Center rounded="xs" shadow={1}>
+  <Heading>Latest From Database:</Heading>
+{
+  userArr.slice(0).reverse().map( (x, i) => (<Text key={x.key || i}>{x.login}</Text>) )
+}
+
+
 
 </Center>
-  {/*
-
-      <Button title={imageDisplay ? 'hide': 'show'} onPress={() => { setImageDisplay(!imageDisplay) } } />
-      {
-      imageDisplay ?
-        (<View><Image  style={[image.container, image.image]} source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg'}} /></View>)
-        : (<></>)  
-      }
-      {imageDisplay.toString()}
-
-  */}{/* source={require('')}*/}
 
 
 </ScrollView></NativeBaseProvider>
-  <Text style={{textAlign: 'right'}}>© Arthur Zarankin</Text>
-</View></KeyboardAvoidingView>
-</SafeAreaView>);
+<NativeText style={styles.right}>© Arthur Zarankin</NativeText>
+</NativeView></KeyboardAvoidingView></SafeAreaView>);
+}
+
+function globalFunctions(allVars){
+  const {user, setUser, userArr, setUserArr, userNameRef} = allVars;
+  
+  function handleSave(){
+    
+  }
+  
+  return (handleSave)
+}
+
+function handleSave(allVars){ errorHandler(async() =>{
+    const { user } = allVars;
+    const data = user;
+    const response = await axios.post(DATABASE, data);
+    handleGetAllSearches(allVars);
+} ); }
+
+function handleGetAllSearches(allVars){ errorHandler(async() =>{
+    const { setUserArr } = allVars;
+    const response = await axios.get(DATABASE);
+    const array = [];
+    for (const [key, value] of Object.entries(response.data)) {
+      const val = {key: key,...value};
+      array.push(val);
+    }
+    setUserArr(array);
+} ); }
+
+function handleGithubSearch(allVars, firstSetUser = undefined){ errorHandler(async() =>{
+  const {setUser, userNameRef} = allVars;
+  try{
+    const userName = firstSetUser || userNameRef.current.getValue();
+    if(userName === '') throw new Error();
+    const response = await axios.get(GITHUB_API + '/' + userName );
+    setUser(response.data); 
+    userNameRef.current?.empty();
+  }catch(e){ 
+    setUser();
+    userNameRef.current?.focus();
+    throw new Error();
+  }
+} ); }
+
+async function errorHandler(callback){
+    try{ await callback();
+  }catch(e){
+  }
 }
 
 
@@ -138,6 +142,7 @@ const image = StyleSheet.create({
 
 const styles = StyleSheet.create({
   black: {backgroundColor: '#000'}
+  , right: {textAlign: 'right'}
   , globalContainer: {
     flex: 1, backgroundColor: 'azure' 
     , paddingTop: Platform.OS == "android" ? StatusBarAndroid.currentHeight : 0
@@ -153,10 +158,19 @@ const styles = StyleSheet.create({
   , scrollView: { }
 });
 
+const globalStyleConfig = {
+  dependencies: {
+    "linear-gradient": LinearGradient
+  }
+};
 
-async function errorHandler(callback){
-    try{ await callback()
-  }catch(e){
-    alert('server fail')
+const gradientBackground = {
+  linearGradient: {
+    colors: ["lightBlue.600", "violet.400"],
+    start: [0, 1],
+    end: [1, 0]
   }
 }
+
+
+
