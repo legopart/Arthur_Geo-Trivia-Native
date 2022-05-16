@@ -1,7 +1,9 @@
 import { useState, useRef, useImperativeHandle, forwardRef } from 'react';
-import { StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
+import { Box, Input as NativeInput, FormControl } from "native-base";
 
-const Input = forwardRef( ({placeholder, onSubmit, style, children, ...props}, ref) => {
+
+const Input = forwardRef( ({label, placeholder, onSubmit, style, children, ...props}, ref) => {
   const [value, setValue] = useState(children);
   const textInputRef = useRef(null);
   useImperativeHandle (ref, () => ({
@@ -11,15 +13,21 @@ const Input = forwardRef( ({placeholder, onSubmit, style, children, ...props}, r
     , getNumber: () => Number(value)
     , focus: () => textInputRef.current?.focus()
   }));
-return (<><TextInput style={{...styleInput, ...style}} {...props} value={value} placeholder={placeholder} onChangeText={setValue} returnKeyType={onSubmit ? 'next': 'done'} onSubmitEditing={onSubmit} ref={textInputRef} /></>)
+return (<>
+
+<FormControl.Label style={styleInput.label}>{label}</FormControl.Label>
+<Box ml={5} mr={5} mb={2}>
+<NativeInput value={value} size='lg' style={{...styleInput.input, ...style}} {...props}  placeholder={placeholder} onChangeText={setValue} returnKeyType={onSubmit ? 'next': 'done'} onSubmitEditing={onSubmit} ref={textInputRef} />
+</Box>
+</>)
 })
 
 export default Input;
 
 const styleInput = StyleSheet.create({
-minHeight: 50
-, minWidth: '20%'
-, marginVertical: 6
-, paddingHorizontal: 6
-, backgroundColor: '#eeeeee'
+label: { marginLeft: 7 }
+, input:{
+  minWidth: '20%'
+  , textAlign: 'center'
+}
 });
