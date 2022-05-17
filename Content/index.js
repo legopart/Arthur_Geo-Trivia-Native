@@ -1,3 +1,6 @@
 import ArrayApp from './ArrayApp';
 import GithubFinder from './GithubFinder';
-export { GithubFinder, ArrayApp };
+import GithubUserData from './GithubUserData';
+
+
+export {  ArrayApp, GithubFinder, GithubUserData };
