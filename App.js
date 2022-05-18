@@ -20,7 +20,8 @@ return (<MainPageContainer>
     <NavigationContainer>
 
       <Drawer.Navigator initialRouteName="Home" >
-        <Drawer.Screen name="Home" options={{ title: 'Home' }}  component={IndexScreenStacks} />
+        <Drawer.Screen name="Home" options={{ title: 'Home - Arthur Zarankin ' }}  component={IndexScreenStacks} />
+        <Drawer.Screen name="MangePersons" options={{ title: 'Mange Persons' }}  component={ManagePersons} />
         <Drawer.Screen name="ArrayApp" options={{ title: 'Array App' }} component={ArrayApp} />
         <Drawer.Screen name="GithubFinder" options={{ title: 'Github Finder' }} component={GithubFinder} />
       </Drawer.Navigator>
@@ -52,8 +53,6 @@ const headerGlobalStyle = {
 const headerStyle = { }
 
 return render();}
-
-
 
 
 function IndexScreen() {

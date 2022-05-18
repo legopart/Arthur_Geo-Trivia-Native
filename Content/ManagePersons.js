@@ -41,16 +41,16 @@ const render = () => (<PageContainer>
         <Box style={{flex: 1}}><Input label='Age' ref={ageRef} onSubmit={() => {addressRef.current.focus();}} keyboardType='numeric'></Input></Box>
     </Box>
     <Box><Input label='Address' ref={addressRef} onSubmit={() => {searchRef.current.focus();}}></Input></Box>
-<Button onPress={ handleInsert } ref={searchRef}>Insert</Button>
-<Box>
+<Button mt={4} onPress={ handleInsert } ref={searchRef}>Insert</Button>
+<Box mt={4} style={{}}>
     {persons?.map((x, i) => (<Box key={i} style={{flexDirection: 'row'}}>
         <Box style={{flex: 1}}>{x.name}</Box>
         <Box style={{flex: 1}}>{x.age}</Box>
         <Box style={{flex: 2}}>{x.address}</Box>
     </Box>) )}
 </Box>
-{persons && persons[0]? <Button onPress={ handleDropTable } >Drop All Data</Button> : null}
 
+{persons && persons[0]? <Button mt={4} onPress={ handleDropTable } >Drop All Data</Button> : null}
 
 </ScrollView>
 </PageContainer>);
