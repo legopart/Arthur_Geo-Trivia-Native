@@ -31,6 +31,7 @@ export default function ManagePersons() {
 
 function handleDropTable(){
     dropAll();
+    init();
     handleSelectAll();
 }
 
@@ -42,7 +43,7 @@ const render = () => (<PageContainer>
     </Box>
     <Box><Input label='Address' ref={addressRef} onSubmit={() => {searchRef.current.focus();}}></Input></Box>
 <Button mt={4} onPress={ handleInsert } ref={searchRef}>Insert</Button>
-<Box mt={4} style={{}}>
+<Box m={2} style={{}}>
     {persons?.map((x, i) => (<Box key={i} style={{flexDirection: 'row'}}>
         <Box style={{flex: 1}}>{x.name}</Box>
         <Box style={{flex: 1}}>{x.age}</Box>
@@ -50,7 +51,7 @@ const render = () => (<PageContainer>
     </Box>) )}
 </Box>
 
-{persons && persons[0]? <Button mt={4} onPress={ handleDropTable } >Drop All Data</Button> : null}
+{persons && persons[0]? <Button onPress={ handleDropTable } >Drop All Data</Button> : null}
 
 </ScrollView>
 </PageContainer>);
@@ -108,9 +109,9 @@ async function addNewItem(name, age, address){ return await errorHandler(async()
 
 
 function dropAll(){ errorHandler(async() => {
-    try{
-        await sqlite( `DROP TABLE IF EXISTS PERSONS`);
-    }catch(e){}
+
+        return await sqlite( `DROP TABLE IF EXISTS PERSONS`);
+     
 });}
 
 // basic async sqlite functions
