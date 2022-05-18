@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   }
   ,container: { 
     flex: 1 , borderWidth: 2, borderColor: 'azure', backgroundColor: 'white'
-   , justifyContent: 'center'
+   , justifyContent: 'center', paddingTop: 5
   }
 });
 

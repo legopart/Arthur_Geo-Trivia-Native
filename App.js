@@ -6,23 +6,22 @@ import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Ima
 
 import { NavigationContainer }  from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import { useNavigation } from '@react-navigation/native';
 import { MainPageContainer, PageContainer } from './Components'
 import {GithubFinder, GithubUserData ,ArrayApp} from './Content'
-import {useGoBack, useGoTo} from './Hooks'
+import {useGoBack, useGoTo, useNavigation} from './Hooks'
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [userMoreData, setUserMoreData] = useState();
-return (<MainPageContainer>
 
+return (<MainPageContainer>
     <NavigationContainer>
       <Stack.Navigator>
+
+        <Stack.Screen name='GithubFinder' options={{ title: 'Github Finder' }} component={ GithubFinder }/>
+        <Stack.Screen name='GithubUserMoreData' options={{ title: 'Github User More Data' }} component={ GithubUserData }/>
+
         <Stack.Screen name='IndexScreen' options={{ title: 'Arthur Zarankin, React Native' }}  component={IndexScreen}/>
-        <Stack.Screen name='GithubFinder' options={{ title: 'Github Finder' }} component={() => GithubFinder ({userMoreData, setUserMoreData})}/>
-        <Stack.Screen name='GithubUserMoreData' options={{ title: 'Github User More Data' }} component={() => GithubUserData({userMoreData})}/>
         <Stack.Screen name='ArrayApp' options={{ title: 'Array App' }} component={ArrayApp}/>
       </Stack.Navigator>
     </NavigationContainer>
@@ -40,6 +39,4 @@ function IndexScreen() {
   </Box>
   </PageContainer>);
 }
-
-
 

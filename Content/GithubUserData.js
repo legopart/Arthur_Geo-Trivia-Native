@@ -1,23 +1,16 @@
 import React, { useState, useRef,  useEffect } from 'react';
 import { Platform, StatusBar as StatusBarAndroid, SafeAreaView, StyleSheet, ViewPagerAndroidBase, View } from 'react-native';
-import { AntDesign, Zocial, FontAwesome, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
-import axios from 'axios';
 import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Image, NativeBaseProvider, Container,} from "native-base";
 import { PageContainer, Input } from '../Components'
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRoute } from '../Hooks';
 
-
-export default function GithubUserData({userMoreData}) {
+export default function GithubUserData() {
   useEffect(() => {
-
   }, []);
-
-const user = userMoreData;
-
+  const route = useRoute();
+  const user = route.params;
 const render = () => (<PageContainer>
 <ScrollView>
-
   <Box p={2} style={{borderRadius: 10}} bg={gradientBackground}>
     <Box style={{padding: 6, paddingLeft: 14, paddingRight: 14, backgroundColor: 'white', borderWidth: 1, borderColor: 'gray', borderRadius: 10}}>
       <Box style={{flexDirection: 'row',backgroundColor: 'azure', borderRadius: 10, alignItems: 'center', alignContent: 'center'}}>
@@ -28,15 +21,10 @@ const render = () => (<PageContainer>
       </Box>
       </Box>
     </Box>
-  
     <Box mt={2} style={{backgroundColor: 'white', borderRadius: 10}}>
-
     </Box>
 </Box>
-
 <Spacer  />
-
-
 </ScrollView>
 </PageContainer>);
 

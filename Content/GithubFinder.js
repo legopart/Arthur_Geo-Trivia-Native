@@ -5,9 +5,9 @@ import axios from 'axios';
 import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Image, NativeBaseProvider, Container,} from "native-base";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { PageContainer, Input } from '../Components'
-import { useGoTo } from '../Hooks'
-
+import { useGoTo, useLocalStorage } from '../Hooks'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LocalStorageUsers from './GithubFinderLocalStorage';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -15,62 +15,23 @@ const GITHUB_API = 'https://api.github.com/users';
 const DATABASE = 'https://w3arthurdb-default-rtdb.firebaseio.com/users.json';
 
 
-export default function GithubAppTabs({userMoreData, setUserMoreData}) {
+export default function GithubAppTabs() {
 const render = () => (<>
 <Tab.Navigator style={{  }}>
-  <Tab.Screen component={() => GithubApp({userMoreData, setUserMoreData})} name='GitHubSearch' options={{ title: () => ( <Text>Git Hub Search</Text> ), }} />
-  <Tab.Screen component={LocalStorageUsers} name='LocalStorage' options={{ title: () => ( <Text>Local Storage</Text> ), }} />
+  <Tab.Screen component={ GithubApp } name='GitHubSearch' options={{ title: () => ( <Text>Git Hub Search</Text> ), }} />
+  <Tab.Screen component={ LocalStorageUsers } name='LocalStorage' options={{ title: () => ( <Text>Local Storage</Text> ), }} />
 </Tab.Navigator>
 </>);
 return render();}
 
 
-
-
-
-function LocalStorageUsers() {
-
-  const [users, SetUsers] = useState([]);
-
-  useEffect(() => {
- 
-    handleReceiveLocalStorageUsers();
-
-  });
-
-const render = () => (<PageContainer>
-<ScrollView>
-  <Center>
-    {users.slice(0).reverse().map((x) => (<Box key={x.key}>{x.login}</Box>))}
-  </Center>
-</ScrollView>
-</PageContainer>);
-
-
-async function handleReceiveLocalStorageUsers(){
-  try{
-    const value = await AsyncStorage.getItem('@users');
-    if(!value){SetUsers([]);}
-    const valueJson = JSON.parse(value);
-    if(!valueJson[0]) throw new Error();
-    SetUsers(valueJson);
-  }catch(e){await AsyncStorage.removeItem('@users'); SetUsers([]);}
-}
-
-
-return render();}
-
-
-
-
-
-function GithubApp({userMoreData, setUserMoreData, navigation}) {
+function GithubApp() {
   const [user, setUser]=useState();
   const [userArr, setUserArr]=useState([ ]);
   const userNameRef = useRef();
   useEffect(() => {
-    if(userMoreData) setUser(userMoreData);
-    else handleGithubSearch('w3arthur');  //delete
+    //if(userMoreData) setUser(userMoreData);
+    handleGithubSearch('w3arthur');  //delete
     handleGetAllSearches();
     userNameRef.current?.focus();
     
@@ -121,8 +82,8 @@ const render = () => (<PageContainer>
 
 function handleMoreData(){
   if(!user) return;
-  setUserMoreData(user);
-  goTo('GithubUserMoreData');
+  const data = user;
+  goTo('GithubUserMoreData', data);
 }
 
 function handleSave(){ errorHandler(async() =>{
