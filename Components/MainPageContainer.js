@@ -10,7 +10,7 @@ return(<>
 
 <SafeAreaView style={styles.globalContainer}><StatusBar style="auto" /><KeyboardAvoidingView style={styles.preContainer}><NativeView style={styles.container}>
 {/*<NativeText>© Arthur Zarankin</NativeText>*/}
-<NativeBaseProvider config={globalStyleConfig}>
+<NativeBaseProvider config={globalStyleConfig} >
 
 {children}
 
@@ -32,8 +32,10 @@ const styles = StyleSheet.create({
   }
   , container: { 
     flex: 1 ,  backgroundColor: 'white' ,borderRadius: 13 
-    , padding: 2
+    , padding: 7
+
     , justifyContent: 'center', //alignItems: 'center'
+
   }
   , scrollView: { }
 });

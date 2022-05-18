@@ -14,12 +14,14 @@ export default function LocalStorageUsers() {
   const [users, SetUsers] = useState([]);
   useEffect(() => {
     handleReceiveLocalStorageUsers();
-  });
+  }, []); //add better refresh role!
+
+  function reversedId(i){  return users.length -i - 1; }
 
 const render = () => (<PageContainer>
 <ScrollView>
   <Center>
-    {users.slice(0).reverse().map((x) => (<Box key={x.key}>{x.login}</Box>))}
+    {users.slice(0).reverse().map((x, i) => (<Box key={reversedId(i)}>{x.login}</Box>))}
   </Center>
 </ScrollView>
 </PageContainer>);

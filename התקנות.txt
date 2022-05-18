@@ -1,0 +1,13 @@
+npm i -g expo-cli 
+להוריד לפלאפון expo client
+
+תוסף
+React Native Tools.	MICROSOFT
+React-Native/React/Redux snippets for es6/es7
+Material Icon Theme	Philipp Kief
+
+Native>cd
+npm start
+
+expo init Arthur
+
