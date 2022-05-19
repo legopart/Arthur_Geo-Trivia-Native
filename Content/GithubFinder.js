@@ -1,11 +1,12 @@
 import React, { useState, useRef,  useEffect } from 'react';
-import { Platform, StatusBar as StatusBarAndroid, SafeAreaView, StyleSheet, ViewPagerAndroidBase, View } from 'react-native';
+import { Platform, StatusBarasStatusBarAndroid, SafeAreaView, StyleSheet, ViewPagerAndroidBase, View, Dimensions } from 'react-native';
 import { AntDesign, Zocial, FontAwesome, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Image, NativeBaseProvider, Container,} from "native-base";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { PageContainer, Input } from '../Components'
 import { useGoTo, useLocalStorage } from '../Hooks'
+import { debounce } from '../Api'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LocalStorageUsers from './GithubFinderLocalStorage';
 
@@ -26,6 +27,7 @@ return render();}
 
 
 function GithubApp() {
+  const goTo = useGoTo();
   const [user, setUser]=useState();
   const [userArr, setUserArr]=useState([ ]);
   const userNameRef = useRef();
@@ -37,7 +39,8 @@ function GithubApp() {
     
   }, []);
 
-  const goTo = useGoTo();
+  
+
 
 const render = () => (<PageContainer>
 <ScrollView>
@@ -55,7 +58,7 @@ const render = () => (<PageContainer>
     </Box>
   
     <Box mt={2} style={{backgroundColor: 'white', borderRadius: 10}}>
-      <Input onChange={(e) => {/*handleGithubSearch(e.target.value);*/}} style={{borderColor: 'red', borderWidth: 0, borderRadius:3 }} label='Github User Name' placeholder='Github Username' ref={userNameRef}
+      <Input onChangeText={ handleGithubSearchDelay } style={{borderColor: 'red', borderWidth: 0, borderRadius:3 }} label='Github User Name' placeholder='Github Username' ref={userNameRef}
           rightButton={ <Button size="md" style={{paddingLeft: 20, paddingRight: 20}} leftIcon={<Icon as={MaterialIcons} name="person-search" size="lg" />} onPress={() => handleGithubSearch() }>{""}</Button> }
       ></Input>
     </Box>
@@ -102,11 +105,17 @@ function handleGetAllSearches(){ errorHandler(async() =>{
     setUserArr(array);
 } ); }
 
+
+const handleGithubSearchDelay = debounce( () => {
+        handleGithubSearch();
+    }, 2200);
+
 function handleGithubSearch(firstSetUser = undefined){ errorHandler(async() =>{
   try{
     const userName = firstSetUser || userNameRef.current.getValue();
     if(userName === '') throw new Error();
     const response = await axios.get(GITHUB_API + '/' + userName );
+    setUser();
     setUser(response.data); 
   }catch(e){ 
     setUser();
@@ -121,6 +130,7 @@ async function errorHandler(callback){
   }
 }
 
+
 async function handleLocalStorageStoreUser(){
   try{
     if(!user) return;
@@ -131,7 +141,8 @@ async function handleLocalStorageStoreUser(){
       valueJson.push(user);
     }else{ valueJson = [user] }
     await AsyncStorage.setItem('@users', JSON.stringify(valueJson));
-    goTo('LocalStorage');
+    const renderData = Math.random();
+    goTo('LocalStorage', renderData );
   }catch(e){}
 }
 

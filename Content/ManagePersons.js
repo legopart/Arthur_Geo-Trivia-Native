@@ -6,18 +6,14 @@ import { Input as BaseInput,ScrollView, Heading, Text, Flex,Center, Box, Spacer 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { PageContainer, Input } from '../Components'
 import { useGoTo, useLocalStorage } from '../Hooks'
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import LocalStorageUsers from './GithubFinderLocalStorage';
-
-import * as SQLite from 'expo-sqlite';
-
-const database = SQLite.openDatabase('persons.db');
+import { debounce, sqlite } from '../Api'
 
 
 export default function ManagePersons() {
     const nameRef = useRef();
     const ageRef = useRef();
     const addressRef = useRef();
+    const insertRef = useRef();
     const searchRef = useRef();
     const [persons, setPersons] = useState();
 
@@ -29,21 +25,18 @@ export default function ManagePersons() {
     }, []);
 
 
-function handleDropTable(){
-    dropAll();
-    init();
-    handleSelectAll();
-}
-
 const render = () => (<PageContainer>
 <ScrollView>
     <Box style={{flexDirection: 'row'}}>
         <Box style={{flex: 2}}><Input  label='Name' ref={nameRef} onSubmit={() => {ageRef.current.focus();}} ></Input></Box>
         <Box style={{flex: 1}}><Input label='Age' ref={ageRef} onSubmit={() => {addressRef.current.focus();}} keyboardType='numeric'></Input></Box>
     </Box>
-    <Box><Input label='Address' ref={addressRef} onSubmit={() => {searchRef.current.focus();}}></Input></Box>
-<Button mt={4} onPress={ handleInsert } ref={searchRef}>Insert</Button>
-<Box m={2} style={{}}>
+    <Box><Input label='Address' ref={addressRef} onSubmit={() => {insertRef.current.focus();}}></Input></Box>
+<Button mt={4} onPress={ handleInsert } ref={insertRef}>Insert</Button>
+
+
+
+<Box m={2} mt={5} style={{}}>
     {persons?.map((x, i) => (<Box key={i} style={{flexDirection: 'row'}}>
         <Box style={{flex: 1}}>{x.name}</Box>
         <Box style={{flex: 1}}>{x.age}</Box>
@@ -51,17 +44,36 @@ const render = () => (<PageContainer>
     </Box>) )}
 </Box>
 
-{persons && persons[0]? <Button onPress={ handleDropTable } >Drop All Data</Button> : null}
-
+<Box><Input label='Search Name' ref={searchRef}  onChangeText={ handleSearchDelay } rightButton={ <Button size="md" style={{paddingLeft: 20, paddingRight: 20}} leftIcon={<Icon as={MaterialIcons} name="person-search" size="lg" />} onPress={ handleSearch } >{""}</Button> } ></Input></Box>
+{persons && persons[0]? <Button mt={12} onPress={ handleDropTable } >Drop All Data</Button> : null}
 </ScrollView>
 </PageContainer>);
 
+function handleDropTable(){
+    dropAll();
+    init();
+    handleSelectAll();
+}
 
 async function handleSelectAll(){
-    const result = await selectAll();
+    searchRef.current.empty()
+    handleSearch();
+}
+
+const handleSearchDelay = debounce( () => {
+        handleSearch();
+    }, 1100);
+
+const handleSearch = async() => {
+    const name = searchRef.current.getValue();
+    const result = await selectByName(name);
     console.log(result);
     setPersons(result);
-}
+};
+
+
+
+
 
 function handleInsert(){
         const name = nameRef.current.getValue();
@@ -78,12 +90,11 @@ function handleInsert(){
 
 return render();}
 
-
-
-const selectAll = async() => { return await errorHandler(async() => {
-    const result = await sqlite( `select * from Persons` );
+const selectByName = async(name) => { return await errorHandler(async() => {
+    const result = await sqlite( `select * from Persons where name like ?`, [ '%'+name+'%' ] );
     return result.rows._array;
 });}
+
 
 function init(){ errorHandler(async() => {
 await sqlite( 
@@ -124,20 +135,4 @@ const errorHandler = async(callback) => {
         console.error(JSON.stringify(e));
     }
 }
-
-const sqlite = async(queryString, paramsArray) => {
-    return await asyncPromise((resolve,reject) => database.transaction( (conn) => { conn.executeSql( queryString, paramsArray||[], (_,result) => { resolve(result); }, (_,error) => { reject(error); } ); }))
-}
-
-const asyncPromise = async(callback) => {
-    const promiseExtractor = async() => {
-        return await new Promise((resolve,reject)=>{ callback(resolve,reject); });
-    }
-    return await promiseExtractor().catch( (err) => { throw err; } );
-}
-
-
-
-
-
 

@@ -5,16 +5,17 @@ import axios from 'axios';
 import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Image, NativeBaseProvider, Container,} from "native-base";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { PageContainer, Input } from '../Components'
-import { useGoTo, useLocalStorage } from '../Hooks'
+import { useRoute, useGoTo, useLocalStorage } from '../Hooks'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 export default function LocalStorageUsers() {
+  const route = useRoute();
+  const renderData = route.params;
 
   const [users, SetUsers] = useState([]);
   useEffect(() => {
     handleReceiveLocalStorageUsers();
-  }, []); //add better refresh role!
+  }, [renderData]); //add better refresh role!
 
   function reversedId(i){  return users.length -i - 1; }
 

@@ -14,6 +14,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
+
 export default function App() {
 
 return (<MainPageContainer>
@@ -24,6 +25,10 @@ return (<MainPageContainer>
         <Drawer.Screen name="MangePersons" options={{ title: 'Mange Persons' }}  component={ManagePersons} />
         <Drawer.Screen name="ArrayApp" options={{ title: 'Array App' }} component={ArrayApp} />
         <Drawer.Screen name="GithubFinder" options={{ title: 'Github Finder' }} component={GithubFinder} />
+
+
+<Drawer.Screen name='GithubUserMoreData' options={ { title: 'Github  data'} } component={ GithubUserData }/>
+
       </Drawer.Navigator>
 
     </NavigationContainer>
@@ -32,16 +37,17 @@ return (<MainPageContainer>
 
 
 
-
-
 function IndexScreenStacks() {
 const render = () => (<Stack.Navigator screenOptions={{ ...headerGlobalStyle }}>
   <Stack.Screen name='MangePersons' options={{ title: 'Mange Persons', ...headerStyle }}  component={ManagePersons}/>
+
   <Stack.Screen name='IndexScreen' options={{ title: 'Arthur Zarankin, React Native', ...headerStyle }}  component={IndexScreen}/>
-  <Stack.Screen name='GithubUserMoreData' options={ ({ route }) => ({ title: <>{'Github ' + route.params?.login + ' data'}</>, ...headerStyle}) } component={ GithubUserData }/>
+  
+  <Stack.Screen name='GithubUserMoreData' options={ ({ route }) => ({ title: 'Github ' + route.params?.login + ' data', ...headerStyle}) } component={ GithubUserData }/>
   <Stack.Screen name='GithubFinder' options={{ title: 'Github Finder', ...headerStyle }} component={ GithubFinder }/>
   <Stack.Screen name='ArrayApp' options={{ title: 'Array App', ...headerStyle }} component={ArrayApp}/>
 </Stack.Navigator>);
+
 
 const headerGlobalStyle = {
   headerStyle: { backgroundColor: '#85D6FF'}
