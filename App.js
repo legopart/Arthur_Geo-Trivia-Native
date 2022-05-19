@@ -6,7 +6,7 @@ import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Ima
 
 import { NavigationContainer }  from '@react-navigation/native';
 import { MainPageContainer, PageContainer } from './Components'
-import {GithubFinder, GithubUserData ,ArrayApp, ManagePersons} from './Content'
+import {Flights, GithubFinder, GithubUserData ,ArrayApp, ManagePersons} from './Content'
 import {useGoBack, useGoTo, useNavigation} from './Hooks'
 import 'react-native-gesture-handler';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -22,12 +22,13 @@ return (<MainPageContainer>
 
       <Drawer.Navigator initialRouteName="Home" >
         <Drawer.Screen name="Home" options={{ title: 'Home - Arthur Zarankin ' }}  component={IndexScreenStacks} />
+          <Drawer.Screen name='Flights' options={{ title: 'Flights' }}  component={Flights}/>
         <Drawer.Screen name="MangePersons" options={{ title: 'Mange Persons' }}  component={ManagePersons} />
         <Drawer.Screen name="ArrayApp" options={{ title: 'Array App' }} component={ArrayApp} />
         <Drawer.Screen name="GithubFinder" options={{ title: 'Github Finder' }} component={GithubFinder} />
 
 
-<Drawer.Screen name='GithubUserMoreData' options={ { title: 'Github  data'} } component={ GithubUserData }/>
+      <Drawer.Screen name='GithubUserMoreData' options={ { title: 'Github  data'} } component={ GithubUserData }/>
 
       </Drawer.Navigator>
 
@@ -39,10 +40,11 @@ return (<MainPageContainer>
 
 function IndexScreenStacks() {
 const render = () => (<Stack.Navigator screenOptions={{ ...headerGlobalStyle }}>
-  <Stack.Screen name='MangePersons' options={{ title: 'Mange Persons', ...headerStyle }}  component={ManagePersons}/>
+  <Stack.Screen name='Flights' options={{ title: 'Flights', ...headerStyle }}  component={Flights}/>
 
   <Stack.Screen name='IndexScreen' options={{ title: 'Arthur Zarankin, React Native', ...headerStyle }}  component={IndexScreen}/>
-  
+  <Stack.Screen name='MangePersons' options={{ title: 'Mange Persons', ...headerStyle }}  component={ManagePersons}/>
+
   <Stack.Screen name='GithubUserMoreData' options={ ({ route }) => ({ title: 'Github ' + route.params?.login + ' data', ...headerStyle}) } component={ GithubUserData }/>
   <Stack.Screen name='GithubFinder' options={{ title: 'Github Finder', ...headerStyle }} component={ GithubFinder }/>
   <Stack.Screen name='ArrayApp' options={{ title: 'Array App', ...headerStyle }} component={ArrayApp}/>
