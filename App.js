@@ -69,6 +69,7 @@ function IndexScreen() {
 
   <Box style={{flex: 1}}>
     <Box style={{flex: 1}} pt={2}>
+      <Button m={2} leftIcon={<Icon as={MaterialIcons} name="directions-walk" size="lg" />} onPress={()=>{goTo('MangePersons');}}>Manage Persons</Button>
       <Button m={2} leftIcon={<Icon as={MaterialIcons} name="person-search" size="lg" />} onPress={()=>{goTo('GithubFinder');}}>Github Finder App</Button>
       <Button m={2} leftIcon={<Icon as={AntDesign} name="bars" size="lg" />} onPress={()=>{goTo('ArrayApp');}}>Array App</Button>
     </Box>
