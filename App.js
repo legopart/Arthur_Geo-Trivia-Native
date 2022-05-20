@@ -14,10 +14,11 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-
+import {FlightsProvider, useFlights} from './Context'
 export default function App() {
 
 return (<MainPageContainer>
+
     <NavigationContainer>
 
       <Drawer.Navigator initialRouteName="Home" >
@@ -32,6 +33,7 @@ return (<MainPageContainer>
       </Drawer.Navigator>
 
     </NavigationContainer>
+    
 </MainPageContainer>);
 }
 

@@ -1,9 +1,15 @@
 import * as SQLite from 'expo-sqlite';
 
-const database = SQLite.openDatabase('persons.db');
-
+const createSQLite = (dbName) => { // 'persons.db'
+    const database = SQLite.openDatabase(dbName);
+    const sqlite = async(queryString, paramsArray) => {
+    return await asyncPromise((resolve,reject) => database.transaction( (conn) => { conn.executeSql( queryString, paramsArray||[], (_,result) => { resolve(result); }, (_,error) => { reject(error); } ); }))
+    }
+    return sqlite;
+}
 
 const sqlite = async(queryString, paramsArray) => {
+    const database = 'internal.db';
     return await asyncPromise((resolve,reject) => database.transaction( (conn) => { conn.executeSql( queryString, paramsArray||[], (_,result) => { resolve(result); }, (_,error) => { reject(error); } ); }))
 }
 
@@ -14,5 +20,5 @@ const asyncPromise = async(callback) => {
     return await promiseExtractor().catch( (err) => { throw err; } );
 }
 
-
- export default sqlite;
+export default createSQLite;
+export {sqlite};

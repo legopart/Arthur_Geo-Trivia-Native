@@ -3,8 +3,8 @@ import { Input as NativeInput,StyleSheet, TextInput, View } from 'react-native';
 import { Box, Input as BaseInput, FormControl } from "native-base";
 
 
-const Input = forwardRef( ({ onChangeText, leftIcon, rightButton , label, placeholder, onSubmit, style, children, ...props}, ref) => {
-  const [value, setValue] = useState(children);
+const Input = forwardRef( ({ onChangeText, value : externalValue, leftIcon, rightButton , label, placeholder, onSubmit, style, children, ...props}, ref) => {
+  const [value, setValue] = useState(children || externalValue);
   const textInputRef = useRef(null);
   useImperativeHandle (ref, () => ({
     getValue: () => value
@@ -20,7 +20,7 @@ return (<>
   <Box style={leftIcon || rightButton ? { flexDirection: 'row', alignItems: 'center' } : { minWidth: '50%',alignItems: 'center'}}>
 {leftIcon ? <Box style={{marginRight: 2}}>{leftIcon}</Box> : null}
 <Box style={leftIcon || rightButton ? {flex: 1} : {width: '100%', minHeight: 30}}>
-  <BaseInput value={value} size='md' style={{...styleInput.input, ...style}} {...props}  placeholder={placeholder} onChangeText={async(e) => {await setValue(e); await onChangeText()}} returnKeyType={onSubmit ?'next': 'done'} onSubmitEditing={onSubmit} ref={textInputRef} /></Box>
+  <BaseInput value={value} size='md' style={{...styleInput.input, ...style}} {...props}  placeholder={placeholder} onChangeText={async(e) => {await setValue(e); await onChangeText&&onChangeText()}} returnKeyType={onSubmit ?'next': 'done'} onSubmitEditing={onSubmit} ref={textInputRef} /></Box>
 {rightButton ? <Box style={{marginLeft: 8,height: '100%'}}>{rightButton}</Box>: null}
 
 </Box>

@@ -6,12 +6,96 @@ import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Ima
 // import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { PageContainer, Input } from '../Components'
 import { useGoTo, useLocalStorage } from '../Hooks'
-import { debounce, useSQLite } from '../Api'
+import { debounce, createSQLite } from '../Api'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LocalStorageUsers from './GithubFinderLocalStorage';
 import jsonFile from '../openSky.json';
 
-const sqlite = useSQLite('flights.db');
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+
+import {FlightsProvider, useFlights} from '../Context'
+import { render } from 'react-dom';
+
+//import { NavigationContainer } from '@react-navigation/native';
+//import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+const homeName = "Home";
+const detailsName = "Details";
+
+
+
+const Tab = createMaterialBottomTabNavigator();
+
+const sqlite = createSQLite('flights.db');
+
+function SearchFlightsPage(){
+
+    const {flights} = useFlights();
+    const longitudeRef = useRef();
+    const latitudeRef = useRef();
+    const distanceRef = useRef();
+    const [flightList, setFlightList] = useState();
+const render = () => (<PageContainer><ScrollView><Heading>Flights Searching</Heading>
+<Box style={{flexDirection: 'row'}}>
+  <Box style={{flex:1}}><Input label='longitude' ref={longitudeRef} onSubmit={() => {latitudeRef?.current?.focus();}} value='8.2594' /></Box>
+  <Box style={{flex:1}}><Input label='latitude' ref={latitudeRef} onSubmit={() => {distanceRef?.current?.focus();}} value='46.8309' /></Box>
+</Box>
+  <Box style={{flexDirection: 'row'}}>
+  <Box style={{flex:1}}><Input label='distance' ref={distanceRef} onSubmit={() => {}} value='1.31' /></Box>
+  <Box style={{flex:1,  padding: 8, flexDirection: 'column-reverse' }}>
+    {flights ? null: <Button onPress={handleSearch} style={{paddingLeft: -5}} leftIcon={<Icon as={MaterialIcons} name="search" size="lg" />}>Search</Button>}</Box>
+</Box>
+<Box style={{backgroundColor: 'bluesky'}}>{flightList ? `Actual: ${flightList.length}` : null }</Box>
+<Box>{flightList?.map(((x, i) => {return x.country?.trim() === '' ? null :  <Box key={i} style={{backgroundColor: i%2===0 ? 'skyblue' : 'azure'  }}>
+  {x.country}
+</Box>}
+))}</Box>
+</ScrollView></PageContainer>)
+
+
+const handleSearch = () => {
+  
+  const long = longitudeRef.current.getValue();
+  const lat = latitudeRef.current.getValue();
+  const distance = distanceRef.current.getValue();
+
+
+
+  selectFlightLatLong(long, lat, distance);
+};
+
+
+const selectFlightLatLong = async(long, lat, distance) => { return await errorHandler(async() => {
+const dis = distance / 2;
+const minLong = (long - dis) || 5.9962;
+const maxLong = (long + dis) || 10.5226;
+const minLat = (lat - dis) || 45.8389;
+const maxLat = (lat + dis) || 47.8229;
+const result = await sqlite( `
+    select country from FLIGHTS
+    WHERE (longitude BETWEEN ? AND ?) AND (latitude BETWEEN ? AND ?)
+    GROUP BY country
+    `, [minLong, maxLong, minLat, maxLat]); 
+
+setFlightList(result.rows._array)
+console.log(result.rows._array);
+console.log('result999');
+//setCountSQL(result.rows._array);
+});};
+
+
+return render();}
+
+export default function MyTabs() {
+return (<>
+  <FlightsProvider>
+    <Tab.Navigator initialRouteName={detailsName} activeColor="blue" inactiveColor="#3e2465" barStyle={{ backgroundColor: 'azure', paddingBottom: 20 }}>
+      <Tab.Screen name={homeName} component={Flights} options={{ tabBarLabel: 'Home', tabBarIcon: ({ focused, color, size }) => (<Box><Ionicons name="list" color={color} size={24} /></Box>),}} />
+      <Tab.Screen name={detailsName} component={SearchFlightsPage} options={{ tabBarLabel: 'Flight Searcg', tabBarIcon: ({ focused, color, size }) => (<Box><Ionicons name="search" color={color} size={24} /></Box>),}} />
+    </Tab.Navigator>
+  </FlightsProvider>
+  </>);
+}
 
 // const Tab = createMaterialTopTabNavigator();
 // function FlightTabs() {
@@ -29,92 +113,33 @@ const AREA_FLIGHTS_API = 'https://opensky-network.org/api/states/all?lamin=45.83
 
 
 
-
-
-
-export default function Flights() {
+function Flights() {
   const goTo = useGoTo();
   const [jsonData, setJsonData]=useState();
-  const [countJS, setCountJS]=useState([]);
+  const [countJS, setCountJS]=useState();
   const [countSQL, setCountSQL]=useState();
 
-function handleGetAllFlights(){ errorHandler(async() =>{
-    //const response = await axios.get(ALL_FLIGHTS_API);
-    const response = {...jsonFile};
-    //console.log('data'); console.log(response.states);
-    setJsonData(response.states);
-    return response.states;
-} ); }
-
-
-
-
-
-
-
-
-
-async function init(){ 
-sqlite( `DROP TABLE IF EXISTS FLIGHTS`)
-sqlite( `CREATE TABLE IF NOT EXISTS FLIGHTS( 
-                        , id INTEGER NOT NULL
-                        , "country" TEXT PRIMARY KEY NOT NULL
-                        , "counter" INTEGER NOT NULL DEFAULT 1
-                        , PRIMARY KEY("id" AUTOINCREMENT) 
-                        )`);
-sqlite( `CREATE INDEX "" ON "flights" ("counter");`);
-insertAllDataToSQLite();
-}
-
-function insertAllDataToSQLite(){errorHandler( () => {
-  const flights = {...jsonFile}
-  flights.states?.map((flight) => {
-    const country = flight[2];
-    addNewFlightOrUpdate(country);
-  });
-});}
-
-const selectAllFlight = async() => { return await errorHandler(async() => {
-    const result = await sqlite( `select * from FLIGHTS ORDER BY counter DESC LIMIT 10`);
-    setCountSQL(result.rows._array);
-});}
+  const {setFlights} = useFlights();
 
 
 
   useEffect(() => {
-      countAllData_Javascript();
-      init();
-      selectAllFlight();
-      
+      console.log('start');
+      //countAllData_Javascript();
+      // (async() =>{
+      // const result = await sqlite( `select * from FLIGHTS limit 2`); 
+      // console.log(result);})();
+    (async() =>{
+      //await init();
+      await selectAllFlight();
+      console.log('end init');
+    })();
+        
+    setFlights(true);
+     // selectFlightLatLong();
+
+     
   }, []);
-
-
-
-
-async function addNewFlightOrUpdate(country){
-  try{
-    sqlite(
-        `INSERT INTO FLIGHTS(country) VALUES(?)
-        ON CONFLICT(country) DO UPDATE SET counter=counter+1 `
-        , [country]
-    );}
-  catch(e){}
-    
-    //return result;
-;}
-
-
-
-// async function addNewFlight(country){ return await errorHandler(async() => {
-//     const result = await sqlite(
-//         `INSERT INTO 
-//         FLIGHTS(country)
-//         VALUES(?)`
-//         , [country]
-//     );
-//     return result;
-// });}
-
 
 
 
@@ -124,22 +149,68 @@ const render = () => (<PageContainer>
 
 
   <Text>SQLite Version</Text>
-<Box>{!countSQL ? 'wait!' : countSQL?.map((x,i) => (<Box key={i} style={{flexDirection: 'row', backgroundColor: (i%2 == 0 ? 'skyblue' : 'azure') }}>
-  <Box style={{flex: 1}}>{x.country}</Box>
-  <Box style={{flex: 1}}>{x.counter}</Box>
-</Box>))}
-</Box>
+  <Box>{!countSQL ? 'wait!' : countSQL?.map((x,i) => (<Box key={i} style={{flexDirection: 'row', backgroundColor: (i%2 == 0 ? 'skyblue' : 'azure') }}>
+        <Box style={{flex: 1}}>{x.country}</Box>
+        <Box style={{flex: 1}}>{x.counter}</Box>
+    </Box>))}
+  </Box>
 
-    <Text>Javascript Version</Text>
-<Box>{countJS?.map((x,i) => (<Box key={i} style={{flexDirection: 'row', backgroundColor: (i%2 == 0 ? 'skyblue' : 'azure') }}>
-  <Box style={{flex: 1}}>{x[0]}</Box>
-  <Box style={{flex: 1}}>{x[1]}</Box>
-</Box>))}
-</Box>
+  <Text>Javascript Version</Text>
+  <Box>{!countJS? 'Will not use javascript':countJS?.map((x,i) => (<Box key={i} style={{flexDirection: 'row', backgroundColor: (i%2 == 0 ? 'skyblue' : 'azure') }}>
+      <Box style={{flex: 1}}>{x[0]}</Box>
+      <Box style={{flex: 1}}>{x[1]}</Box>
+    </Box>))}
+  </Box>
 
 </ScrollView>
 </PageContainer>);
 
+const selectAllFlight = async() => { return await errorHandler(async() => {
+    const result = await sqlite( `
+        select COUNT(country) counter, country from FLIGHTS
+        GROUP BY country
+        ORDER BY counter DESC
+        LIMIT 10`); 
+    //setFlights(true);
+    setCountSQL(result.rows._array);
+});}
+
+async function init(){ 
+console.log('start init');
+await sqlite( `DROP TABLE IF EXISTS FLIGHTS`);
+await sqlite( `CREATE TABLE IF NOT EXISTS FLIGHTS( 
+                        id INTEGER NOT NULL
+                        , "country" TEXT NOT NULL
+                        , "longitude" NUMERIC
+                        , "latitude" NUMERIC
+                        , PRIMARY KEY("id" AUTOINCREMENT) 
+                        )`);
+await sqlite( `CREATE INDEX "country" ON "FLIGHTS" ("country");`);
+await sqlite( `CREATE INDEX "location" ON "FLIGHTS" ("longitude", "latitude");`);
+
+await insertAllDataToSQLite();
+}
+
+async function insertAllDataToSQLite(){errorHandler( () => {
+  const flights = {...jsonFile}
+  flights.states?.map(async(flight) => {
+    const country = flight[2];
+    const longitude = flight[5];
+    const latitude = flight[6];
+    await addNewFlight(country, longitude, latitude);
+  });
+});}
+
+async function addNewFlight(country, longitude, latitude){
+  try{
+    sqlite(
+        `INSERT INTO FLIGHTS(country,longitude,latitude) VALUES(?,?,?)`
+        , [country, longitude, latitude]
+    );}
+  catch(e){}
+    
+    //return result;
+;}
 
 function countAllData_Javascript(){
   const flights = {...jsonFile}
@@ -156,8 +227,15 @@ function countAllData_Javascript(){
  }
 
 
-
 return render();}
+
+
+
+
+
+
+
+
 
 
 

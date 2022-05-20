@@ -1,4 +1,4 @@
 import debounce from './debounce';
-import sqlite from './sqlite';
+import createSQLite, {sqlite} from './sqlite';
 
-export {  debounce, sqlite };
+export {  debounce, sqlite, createSQLite };

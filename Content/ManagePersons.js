@@ -6,8 +6,9 @@ import { Input as BaseInput,ScrollView, Heading, Text, Flex,Center, Box, Spacer 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { PageContainer, Input } from '../Components'
 import { useGoTo, useLocalStorage } from '../Hooks'
-import { debounce, sqlite } from '../Api'
+import { debounce, createSQLite } from '../Api'
 
+const sqlite = createSQLite('persons.db');
 
 export default function ManagePersons() {
     const nameRef = useRef();
