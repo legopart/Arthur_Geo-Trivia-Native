@@ -27,7 +27,6 @@ return (<MainPageContainer>
         <Drawer.Screen name="ArrayApp" options={{ title: 'Array App' }} component={ArrayApp} />
         <Drawer.Screen name="GithubFinder" options={{ title: 'Github Finder' }} component={GithubFinder} />
 
-
       <Drawer.Screen name='GithubUserMoreData' options={ { title: 'Github  data'} } component={ GithubUserData }/>
 
       </Drawer.Navigator>

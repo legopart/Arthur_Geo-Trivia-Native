@@ -6,9 +6,12 @@ import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Ima
 // import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { PageContainer, Input } from '../Components'
 import { useGoTo, useLocalStorage } from '../Hooks'
-import { debounce } from '../Api'
+import { debounce, useSQLite } from '../Api'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LocalStorageUsers from './GithubFinderLocalStorage';
+import jsonFile from '../openSky.json';
+
+const sqlite = useSQLite('flights.db');
 
 // const Tab = createMaterialTopTabNavigator();
 // function FlightTabs() {
@@ -18,111 +21,151 @@ import LocalStorageUsers from './GithubFinderLocalStorage';
 //   <Tab.Screen component={ LocalStorageUsers } name='LocalStorage' options={{ title: () => ( <Text>Local Storage</Text> ), }} />
 // </Tab.Navigator>
 // </>);
+
 // return render();}
+
+const ALL_FLIGHTS_API = 'https://opensky-network.org/api/states/all';
+const AREA_FLIGHTS_API = 'https://opensky-network.org/api/states/all?lamin=45.8389&lomin=5.9962&lamax=47.8229&lomax=10.5226';
+
+
+
+
+
 
 export default function Flights() {
   const goTo = useGoTo();
-  const [user, setUser]=useState();
-  const [userArr, setUserArr]=useState([ ]);
-  const userNameRef = useRef();
+  const [jsonData, setJsonData]=useState();
+  const [countJS, setCountJS]=useState([]);
+  const [countSQL, setCountSQL]=useState();
+
+function handleGetAllFlights(){ errorHandler(async() =>{
+    //const response = await axios.get(ALL_FLIGHTS_API);
+    const response = {...jsonFile};
+    //console.log('data'); console.log(response.states);
+    setJsonData(response.states);
+    return response.states;
+} ); }
+
+
+
+
+
+
+
+
+
+async function init(){ 
+sqlite( `DROP TABLE IF EXISTS FLIGHTS`)
+sqlite( `CREATE TABLE IF NOT EXISTS FLIGHTS( 
+                        , id INTEGER NOT NULL
+                        , "country" TEXT PRIMARY KEY NOT NULL
+                        , "counter" INTEGER NOT NULL DEFAULT 1
+                        , PRIMARY KEY("id" AUTOINCREMENT) 
+                        )`);
+sqlite( `CREATE INDEX "" ON "flights" ("counter");`);
+insertAllDataToSQLite();
+}
+
+function insertAllDataToSQLite(){errorHandler( () => {
+  const flights = {...jsonFile}
+  flights.states?.map((flight) => {
+    const country = flight[2];
+    addNewFlightOrUpdate(country);
+  });
+});}
+
+const selectAllFlight = async() => { return await errorHandler(async() => {
+    const result = await sqlite( `select * from FLIGHTS ORDER BY counter DESC LIMIT 10`);
+    setCountSQL(result.rows._array);
+});}
+
+
+
   useEffect(() => {
-    //if(userMoreData) setUser(userMoreData);
-    handleGithubSearch('w3arthur');  //delete
-    handleGetAllSearches();
-    userNameRef.current?.focus();
-    
+      countAllData_Javascript();
+      init();
+      selectAllFlight();
+      
   }, []);
 
-  
+
+
+
+async function addNewFlightOrUpdate(country){
+  try{
+    sqlite(
+        `INSERT INTO FLIGHTS(country) VALUES(?)
+        ON CONFLICT(country) DO UPDATE SET counter=counter+1 `
+        , [country]
+    );}
+  catch(e){}
+    
+    //return result;
+;}
+
+
+
+// async function addNewFlight(country){ return await errorHandler(async() => {
+//     const result = await sqlite(
+//         `INSERT INTO 
+//         FLIGHTS(country)
+//         VALUES(?)`
+//         , [country]
+//     );
+//     return result;
+// });}
+
+
 
 
 const render = () => (<PageContainer>
 <ScrollView>
-    <Heading size='xl'>Flight</Heading>
-<Box>dsdsdfsf
+    <Heading size='xl'>Flights Top10</Heading>
+
+
+  <Text>SQLite Version</Text>
+<Box>{!countSQL ? 'wait!' : countSQL?.map((x,i) => (<Box key={i} style={{flexDirection: 'row', backgroundColor: (i%2 == 0 ? 'skyblue' : 'azure') }}>
+  <Box style={{flex: 1}}>{x.country}</Box>
+  <Box style={{flex: 1}}>{x.counter}</Box>
+</Box>))}
 </Box>
+
+    <Text>Javascript Version</Text>
+<Box>{countJS?.map((x,i) => (<Box key={i} style={{flexDirection: 'row', backgroundColor: (i%2 == 0 ? 'skyblue' : 'azure') }}>
+  <Box style={{flex: 1}}>{x[0]}</Box>
+  <Box style={{flex: 1}}>{x[1]}</Box>
+</Box>))}
+</Box>
+
 </ScrollView>
 </PageContainer>);
 
 
-function handleMoreData(){
-  if(!user) return;
-  const data = user;
-  goTo('GithubUserMoreData', data);
-}
-
-function handleSave(){ errorHandler(async() =>{
-    const data = user;
-    const response = await axios.post(DATABASE, data);
-    handleGetAllSearches();
-} ); }
-
-function handleGetAllSearches(){ errorHandler(async() =>{
-    const response = await axios.get(DATABASE);
-    const array = [];
-    for (const [key, value] of Object.entries(response.data)) {
-      const val = {key: key,...value};
-      array.push(val);
-    }
-    setUserArr(array);
-} ); }
+function countAllData_Javascript(){
+  const flights = {...jsonFile}
+  const countries = {};
+  flights.states?.map((flight) => {
+    const country = flight[2];
+    if(countries[country] === undefined ){countries[country] = 1;}
+    else {countries[country]++}
+  });
+  const sortable = Object.entries(countries).sort(([,a],[,b]) => b-a).slice(0, 10) ;
+  console.log('sortable');
+  console.log(sortable);
+  setCountJS(sortable);
+ }
 
 
-const handleGithubSearchDelay = debounce( () => {
-        handleGithubSearch();
-    }, 2200);
-
-function handleGithubSearch(firstSetUser = undefined){ errorHandler(async() =>{
-  try{
-    const userName = firstSetUser || userNameRef.current.getValue();
-    if(userName === '') throw new Error();
-    const response = await axios.get(GITHUB_API + '/' + userName );
-    setUser();
-    setUser(response.data); 
-  }catch(e){ 
-    setUser();
-    userNameRef.current?.focus();
-    throw new Error();
-  }
-} ); }
-
-async function errorHandler(callback){
-    try{ await callback();
-  }catch(e){
-  }
-}
-
-
-async function handleLocalStorageStoreUser(){
-  try{
-    if(!user) return;
-    const value = await AsyncStorage.getItem('@users');
-    let valueJson;
-    if(value) {
-      valueJson = JSON.parse(value);
-      valueJson.push(user);
-    }else{ valueJson = [user] }
-    await AsyncStorage.setItem('@users', JSON.stringify(valueJson));
-    const renderData = Math.random();
-    goTo('LocalStorage', renderData );
-  }catch(e){}
-}
 
 return render();}
 
 
-const image = StyleSheet.create({
-  container: { marginTop: 4,borderWidth: 1,  borderColor: '#85D6FF', backgroundColor: '#85D6FF', borderRadius: 10 }
-  , image: { width: 100, height: 100 }
-});
 
-const gradientBackground = {
-  linearGradient: {
-    colors: ["#85D6FF", "#43C8FF"],
-    start: [1, 0],
-    end: [1, 1]
-  }
+const errorHandler = async(callback) => {
+    try{
+        return await callback();
+    }catch(e){
+        console.error('sqlite internal error');
+        console.error(JSON.stringify(e));
+    }
 }
-
-
-

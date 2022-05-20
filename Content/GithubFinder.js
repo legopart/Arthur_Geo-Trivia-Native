@@ -2,7 +2,7 @@ import React, { useState, useRef,  useEffect } from 'react';
 import { Platform, StatusBarasStatusBarAndroid, SafeAreaView, StyleSheet, ViewPagerAndroidBase, View, Dimensions } from 'react-native';
 import { AntDesign, Zocial, FontAwesome, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
-import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Image, NativeBaseProvider, Container,} from "native-base";
+import { ScrollView, Heading, Text, Flex, Center, Box, Spacer , Button, Icon, Image, NativeBaseProvider, Container,} from "native-base";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { PageContainer, Input } from '../Components'
 import { useGoTo, useLocalStorage } from '../Hooks'
