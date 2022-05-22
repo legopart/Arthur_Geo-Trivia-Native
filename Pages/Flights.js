@@ -16,20 +16,35 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import {FlightsProvider, useFlights} from '../Context'
 import { render } from 'react-dom';
 
-//import { NavigationContainer } from '@react-navigation/native';
-//import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import loadingImages from '../Images/loading.gif';
 
-const homeName = "Home";
-const detailsName = "Details";
-
-
-
-const Tab = createMaterialBottomTabNavigator();
 
 const sqlite = createSQLite('flights.db');
 
-function SearchFlightsPage(){
 
+const homeName = "Home";
+const detailsName = "Details";
+const Tab = createMaterialBottomTabNavigator();
+export default function MyTabs() {
+return (<>
+  <FlightsProvider>
+    <Tab.Navigator initialRouteName={homeName} activeColor="blue" inactiveColor="#3e2465" barStyle={{ backgroundColor: 'azure', paddingBottom: 20 }}>
+      <Tab.Screen name={homeName} component={Flights} options={{ tabBarLabel: 'Home', tabBarIcon: ({ focused, color, size }) => (<Box><Ionicons name="list" color={color} size={24} /></Box>),}} />
+      <Tab.Screen name={detailsName} component={SearchFlightsPage} options={{ tabBarLabel: 'Flight Searcg', tabBarIcon: ({ focused, color, size }) => (<Box><Ionicons name="search" color={color} size={24} /></Box>),}} />
+
+    </Tab.Navigator>
+  </FlightsProvider>
+  </>);
+}
+
+
+
+
+const ALL_FLIGHTS_API = 'https://opensky-network.org/api/states/all';
+const AREA_FLIGHTS_API = 'https://opensky-network.org/api/states/all?lamin=45.8389&lomin=5.9962&lamax=47.8229&lomax=10.5226';
+const EXTENDER = 10000;
+
+function SearchFlightsPage(){
     const {flights} = useFlights();
     const longitudeRef = useRef();
     const latitudeRef = useRef();
@@ -52,25 +67,19 @@ const render = () => (<PageContainer><ScrollView><Heading>Flights Searching</Hea
 ))}</Box>
 </ScrollView></PageContainer>)
 
-
 const handleSearch = () => {
-  
   const long = longitudeRef.current.getValue();
   const lat = latitudeRef.current.getValue();
   const distance = distanceRef.current.getValue();
-
-
-
   selectFlightLatLong(long, lat, distance);
 };
 
-
 const selectFlightLatLong = async(long, lat, distance) => { return await errorHandler(async() => {
-const dis = distance / 2;
-const minLong = (long - dis) || 5.9962;
-const maxLong = (long + dis) || 10.5226;
-const minLat = (lat - dis) || 45.8389;
-const maxLat = (lat + dis) || 47.8229;
+const dis = (distance / 2);
+const minLong = (long - dis) * EXTENDER || 5.9962;
+const maxLong = (long + dis) * EXTENDER || 10.5226;
+const minLat = (lat - dis) * EXTENDER || 45.8389;
+const maxLat = (lat + dis) * EXTENDER || 47.8229;
 const result = await sqlite( `
     select country from FLIGHTS
     WHERE (longitude BETWEEN ? AND ?) AND (latitude BETWEEN ? AND ?)
@@ -83,33 +92,11 @@ console.log('result999');
 //setCountSQL(result.rows._array);
 });};
 
-
 return render();}
 
-export default function MyTabs() {
-return (<>
-  <FlightsProvider>
-    <Tab.Navigator initialRouteName={detailsName} activeColor="blue" inactiveColor="#3e2465" barStyle={{ backgroundColor: 'azure', paddingBottom: 20 }}>
-      <Tab.Screen name={homeName} component={Flights} options={{ tabBarLabel: 'Home', tabBarIcon: ({ focused, color, size }) => (<Box><Ionicons name="list" color={color} size={24} /></Box>),}} />
-      <Tab.Screen name={detailsName} component={SearchFlightsPage} options={{ tabBarLabel: 'Flight Searcg', tabBarIcon: ({ focused, color, size }) => (<Box><Ionicons name="search" color={color} size={24} /></Box>),}} />
-    </Tab.Navigator>
-  </FlightsProvider>
-  </>);
-}
 
-// const Tab = createMaterialTopTabNavigator();
-// function FlightTabs() {
-// const render = () => (<>
-// <Tab.Navigator style={{  }}>
-//   <Tab.Screen component={ Flights } name='GitHubSearch' options={{ title: () => ( <Text>Git Hub Search</Text> ), }} />
-//   <Tab.Screen component={ LocalStorageUsers } name='LocalStorage' options={{ title: () => ( <Text>Local Storage</Text> ), }} />
-// </Tab.Navigator>
-// </>);
 
-// return render();}
 
-const ALL_FLIGHTS_API = 'https://opensky-network.org/api/states/all';
-const AREA_FLIGHTS_API = 'https://opensky-network.org/api/states/all?lamin=45.8389&lomin=5.9962&lamax=47.8229&lomax=10.5226';
 
 
 
@@ -118,38 +105,64 @@ function Flights() {
   const [jsonData, setJsonData]=useState();
   const [countJS, setCountJS]=useState();
   const [countSQL, setCountSQL]=useState();
-
+  const [loading, setLoading]=useState(false);
+  const [data, setData]=useState({...jsonFile});//
   const {setFlights} = useFlights();
 
 
+async function setAxiosData(){
+      const result = await axios.get(ALL_FLIGHTS_API);
+
+    console.log(result.data)
+    setData(result.data);
+    return await data;
+}
+
+
+  async function handleSetDataFlights(){
+
+     
+
+
+
+
+    const list = [
+      async() => countAllData_Javascript()
+      , async() => setLoading(true)
+    //  , async() => await setAxiosData()
+      , async() => await init()
+      , async() => await selectAllFlight()
+      , async() => setLoading(false)
+      , async() => console.log('end init')
+    ];
+
+    for (const fn of list) {
+      
+      await fn() // call function to get returned Promise
+      
+    }
+
+
+    
+    
+  }
 
   useEffect(() => {
       console.log('start');
-      //countAllData_Javascript();
-      // (async() =>{
-      // const result = await sqlite( `select * from FLIGHTS limit 2`); 
-      // console.log(result);})();
-    (async() =>{
-      //await init();
-      await selectAllFlight();
-      console.log('end init');
-    })();
-        
-    setFlights(true);
-     // selectFlightLatLong();
-
-     
+      //
   }, []);
-
-
 
 const render = () => (<PageContainer>
 <ScrollView>
     <Heading size='xl'>Flights Top10</Heading>
-
+ 
 
   <Text>SQLite Version</Text>
-  <Box>{!countSQL ? 'wait!' : countSQL?.map((x,i) => (<Box key={i} style={{flexDirection: 'row', backgroundColor: (i%2 == 0 ? 'skyblue' : 'azure') }}>
+  <Button onPress={setAxiosData}> Get Data</Button>
+  <Button onPress={handleSetDataFlights}> Init</Button>
+  {loading? <Box>wait!<Image source={loadingImages} alt="Alternate Text" size="xl" /></Box> : null}
+
+  <Box>{!countSQL || loading ? null : countSQL?.map((x,i) => (<Box key={i} style={{flexDirection: 'row', backgroundColor: (i%2 == 0 ? 'skyblue' : 'azure') }}>
         <Box style={{flex: 1}}>{x.country}</Box>
         <Box style={{flex: 1}}>{x.counter}</Box>
     </Box>))}
@@ -176,23 +189,32 @@ const selectAllFlight = async() => { return await errorHandler(async() => {
 });}
 
 async function init(){ 
-console.log('start init');
-await sqlite( `DROP TABLE IF EXISTS FLIGHTS`);
-await sqlite( `CREATE TABLE IF NOT EXISTS FLIGHTS( 
+  const list = [
+async() => console.log('start init')
+, async() => await sqlite( `DROP TABLE IF EXISTS FLIGHTS`)
+, async() => await sqlite( `CREATE TABLE IF NOT EXISTS FLIGHTS( 
                         id INTEGER NOT NULL
                         , "country" TEXT NOT NULL
                         , "longitude" NUMERIC
                         , "latitude" NUMERIC
                         , PRIMARY KEY("id" AUTOINCREMENT) 
-                        )`);
-await sqlite( `CREATE INDEX "country" ON "FLIGHTS" ("country");`);
-await sqlite( `CREATE INDEX "location" ON "FLIGHTS" ("longitude", "latitude");`);
+                        )`)
+, async() => await sqlite( `CREATE INDEX "country" ON "FLIGHTS" ("country");`)
+, async() => await sqlite( `CREATE INDEX "location" ON "FLIGHTS" ("longitude", "latitude");`)
 
-await insertAllDataToSQLite();
+, async() => await insertAllDataToSQLite()
+];
+
+for (const fn of list) {
+  
+  await fn() // call function to get returned Promise
+  
+}
+
 }
 
 async function insertAllDataToSQLite(){errorHandler( () => {
-  const flights = {...jsonFile}
+  const flights = data
   flights.states?.map(async(flight) => {
     const country = flight[2];
     const longitude = flight[5];
@@ -205,7 +227,7 @@ async function addNewFlight(country, longitude, latitude){
   try{
     sqlite(
         `INSERT INTO FLIGHTS(country,longitude,latitude) VALUES(?,?,?)`
-        , [country, longitude, latitude]
+        , [country, longitude * EXTENDER, latitude * EXTENDER]
     );}
   catch(e){}
     
@@ -213,7 +235,7 @@ async function addNewFlight(country, longitude, latitude){
 ;}
 
 function countAllData_Javascript(){
-  const flights = {...jsonFile}
+  const flights = data
   const countries = {};
   flights.states?.map((flight) => {
     const country = flight[2];
@@ -228,12 +250,6 @@ function countAllData_Javascript(){
 
 
 return render();}
-
-
-
-
-
-
 
 
 

@@ -5,9 +5,9 @@ import { AntDesign, Ionicons, Zocial, FontAwesome, MaterialIcons, Entypo } from 
 import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Image, NativeBaseProvider, Container,} from "native-base";
 
 import { NavigationContainer }  from '@react-navigation/native';
-import { MainPageContainer, PageContainer } from './Components'
-import {Flights, GithubFinder, GithubUserData ,ArrayApp, ManagePersons} from './Content'
-import {useGoBack, useGoTo, useNavigation} from './Hooks'
+import { MainPageContainer, PageContainer } from './Components';
+import { Flights, GithubFinder, GithubUserData ,ArrayApp, ManagePersons } from './Pages';
+import {useGoBack, useGoTo, useNavigation} from './Hooks';
 import 'react-native-gesture-handler';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
