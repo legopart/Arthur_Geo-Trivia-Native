@@ -1,7 +1,6 @@
-import ArrayApp from './ArrayApp';
-import Flights from './Flights';
-import GithubFinder from './GithubFinder';
-import GithubUserData from './GithubUserData';
-import ManagePersons from './ManagePersons';
+import Login from './Stack/Login';
+import Logout from './Stack/Drawer/Logout';
+import MyHome from './Stack/Drawer/Tabs/MyHome';
+import Favorites from './Stack/Drawer/Tabs/Favorites';
 
-export { ArrayApp, Flights, GithubFinder, GithubUserData, ManagePersons };
+export { Login, Logout, MyHome, Favorites };
