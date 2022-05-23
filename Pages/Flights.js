@@ -16,7 +16,7 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import {FlightsProvider, useFlights} from '../Context'
 import { render } from 'react-dom';
 
-import loadingImages from '../Images/loading.gif';
+import loadingImages from '../assets/loading.gif';
 
 
 const sqlite = createSQLite('flights.db');

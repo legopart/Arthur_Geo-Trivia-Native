@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "React Native Developments",
-    "slug": "React_Native_Developments",
+    "name": "Menora Flix",
+    "slug": "MenoraFlix",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./Images/icon.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./Images/splash.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -22,12 +22,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./Images/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#010101"
       }
     },
     "web": {
-      "favicon": "./Images/favicon.png"
+      "favicon": "./assets/favicon.png"
     }
   }
 }

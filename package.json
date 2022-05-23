@@ -1,5 +1,5 @@
 {
-  "name": "sample",
+  "name": "menoraflix-application",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -41,8 +41,9 @@
     "recyclerlistview": "^3.0.5",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.1.2",
-    "webpack-dev-server": "^4.9.0"
+    "webpack-dev-server": "~3.11.0"
   },
+  "author": "arthur zarankin",
   "devDependencies": {
     "@babel/core": "^7.12.9"
   },

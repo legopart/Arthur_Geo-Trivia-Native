@@ -1,51 +1,106 @@
 import React, { useState, useRef,  useEffect } from 'react';
 import { Platform, StatusBar as StatusBarAndroid, SafeAreaView, StyleSheet, ViewPagerAndroidBase } from 'react-native';
-import { Text as NativeText, View as NativeView,  KeyboardAvoidingView, Button as NativeButton} from 'react-native';
+import {ImageBackground,  Text as NativeText, View as NativeView,  KeyboardAvoidingView, Button as NativeButton} from 'react-native';
 import { AntDesign, Ionicons, Zocial, FontAwesome, MaterialIcons, Entypo } from '@expo/vector-icons';
 import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Image, NativeBaseProvider, Container,} from "native-base";
 
 import { NavigationContainer }  from '@react-navigation/native';
-import { MainPageContainer, PageContainer } from './Components';
+import { MainPageContainer, PageContainer, Input } from './Components';
 import { Flights, GithubFinder, GithubUserData ,ArrayApp, ManagePersons } from './Pages';
 import {useGoBack, useGoTo, useNavigation} from './Hooks';
+import { ReduxProvider } from './reducers';
+
+
 import 'react-native-gesture-handler';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import backgroundImage  from './assets/background.png'
+
+
+
+
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 import {FlightsProvider, useFlights} from './Context'
+
 export default function App() {
 
-return (<MainPageContainer>
+return (<>
+<ReduxProvider>
+<MainPageContainer>
 
     <NavigationContainer>
 
-      <Drawer.Navigator initialRouteName="Home" >
-        <Drawer.Screen name="Home" options={{ title: 'Home - Arthur Zarankin ' }}  component={IndexScreenStacks} />
+      <Drawer.Navigator 
+
+ initialRouteName="Logout" 
+swipeEnabled swipeEdgeWidth
+
+overlayColor={1}
+
+>
+        <Drawer.Screen name="Logout" options={{ drawerLabel: () => (<Box>Logout</Box>),title: 'Logout', headerShown: false }}  component={Logout} />
+        <Drawer.Screen name="Home" options={{ drawerLabel: () => null, drawerIcon: () => null, title: 'Home', headerShown: false }}  component={IndexScreenStacks} />
+
+        {/*
           <Drawer.Screen name='Flights' options={{ title: 'Flights' }}  component={Flights}/>
         <Drawer.Screen name="MangePersons" options={{ title: 'Mange Persons' }}  component={ManagePersons} />
         <Drawer.Screen name="ArrayApp" options={{ title: 'Array App' }} component={ArrayApp} />
         <Drawer.Screen name="GithubFinder" options={{ title: 'Github Finder' }} component={GithubFinder} />
-
+        
       <Drawer.Screen name='GithubUserMoreData' options={ { title: 'Github  data'} } component={ GithubUserData }/>
-
+        */}
       </Drawer.Navigator>
 
     </NavigationContainer>
     
-</MainPageContainer>);
+</MainPageContainer>
+
+</ReduxProvider>
+
+</>);
 }
 
+const headerGlobalStyle = {
+  headerStyle: { backgroundColor: '#E40412',}
+  , headerTintColor: '#E1E1E1'
+  , headerTitleStyle: { fontWeight: 'bold' }
+  , headerShown: true
+}
+
+
+function MyHome(){
+  return (<PageContainer>
+
+  </PageContainer>)
+}
+
+
+function Logout(){
+return (<PageContainer index><ImageBackground source={backgroundImage} resizeMode="cover" style={{justifyContent: "space-around", flex: 1, padding: 20}} imageStyle={{ borderRadius: 12}}>
+    
+    <ScrollView>
+ 
+      <Heading style={{marginVertical: 30}} size={'3xl'}>Menora Flix</Heading>
+      <Text style={{marginVertical: 7}} fontSize='3xl'>Login</Text>
+      <Input selectionColor={'white'} label="username" />
+      <Input label="password" />
+      <Button style={{marginTop: 35}}>Login</Button>
+ 
+  </ScrollView>
+</ImageBackground></PageContainer>)
+}
 
 
 function IndexScreenStacks() {
 const render = () => (<Stack.Navigator screenOptions={{ ...headerGlobalStyle }}>
-  <Stack.Screen name='Flights' options={{ title: 'Flights', ...headerStyle }}  component={Flights}/>
 
+
+  
+  <Stack.Screen name='MyHome' options={{ title: 'My Home', ...headerStyle }}  component={MyHome}/>
   <Stack.Screen name='IndexScreen' options={{ title: 'Arthur Zarankin, React Native', ...headerStyle }}  component={IndexScreen}/>
   <Stack.Screen name='MangePersons' options={{ title: 'Mange Persons', ...headerStyle }}  component={ManagePersons}/>
-
   <Stack.Screen name='GithubUserMoreData' options={ ({ route }) => ({ title: 'Github ' + route.params?.login + ' data', ...headerStyle}) } component={ GithubUserData }/>
   <Stack.Screen name='GithubFinder' options={{ title: 'Github Finder', ...headerStyle }} component={ GithubFinder }/>
   <Stack.Screen name='ArrayApp' options={{ title: 'Array App', ...headerStyle }} component={ArrayApp}/>
@@ -53,8 +108,9 @@ const render = () => (<Stack.Navigator screenOptions={{ ...headerGlobalStyle }}>
 
 
 const headerGlobalStyle = {
-  headerStyle: { backgroundColor: '#85D6FF'}
+  headerStyle: { backgroundColor: '#E40412'}
   , headerTintColor: '#fff'
+  , headerTitleAlign: "center"
   , headerTitleStyle: { fontWeight: 'bold' }
   , headerRight: () => (<Button onPress={() => alert('Created by Arthur Zarankin!')}>Info</Button>)
   , headerShown: true

@@ -1,16 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import { Platform, StatusBar as StatusBarAndroid, SafeAreaView, StyleSheet } from 'react-native';
 import { Text as NativeText, View as NativeView,  KeyboardAvoidingView, Button as NativeButton} from 'react-native';
-import {  NativeBaseProvider, } from "native-base";
+import {  NativeBaseProvider, extendTheme  } from "native-base";
 import {LinearGradient} from 'expo-linear-gradient';
-
+import { globalTheme, globalStyles, globalStyleConfig } from './Theme';
 
 export default function MainPageContainer({children}) {
-return(<>
 
-<SafeAreaView style={styles.globalContainer}><StatusBar style="auto" /><KeyboardAvoidingView style={styles.preContainer}><NativeView style={styles.container}>
+const render = () => (<>
+
+
+<SafeAreaView style={globalStyles.globalContainer}><StatusBar style="auto" /><KeyboardAvoidingView style={globalStyles.preContainer}><NativeView style={globalStyles.container}>
 {/*<NativeText>© Arthur Zarankin</NativeText>*/}
-<NativeBaseProvider config={globalStyleConfig} >
+<NativeBaseProvider theme={globalTheme} config={globalStyleConfig} >
 
 {children}
 
@@ -18,30 +20,18 @@ return(<>
 {/*<NativeText style={styles.right}>© Arthur Zarankin</NativeText>*/}
 </NativeView></KeyboardAvoidingView></SafeAreaView>
 </>);
-}
 
-const styles = StyleSheet.create({
-  black: {backgroundColor: '#000'}
-  , right: {textAlign: 'right', marginRight: 3}
-  , globalContainer: {
-    flex: 1, backgroundColor: 'azure' 
-    , paddingTop: Platform.OS == "android" ? StatusBarAndroid.currentHeight : 0
-  }
-  , preContainer: {
-    flex: 1, backgroundColor: 'lightblue'
-  }
-  , container: { 
-    flex: 1 ,  backgroundColor: 'white' ,borderRadius: 13 
-    , padding: 7
 
-    , justifyContent: 'center', //alignItems: 'center'
 
-  }
-  , scrollView: { }
-});
 
-const globalStyleConfig = {
-  dependencies: {
-    "linear-gradient": LinearGradient
-  }
-};
+
+
+
+
+
+
+return render();}
+
+
+
+
