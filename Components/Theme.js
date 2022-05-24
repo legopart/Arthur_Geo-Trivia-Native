@@ -1,4 +1,4 @@
-import { Platform, StatusBar as StatusBarAndroid, StyleSheet } from 'react-native';
+import { Platform, StatusBar as StatusBarAndroid, StyleSheet, Dimensions } from 'react-native';
 import { extendTheme } from "native-base";
 import {LinearGradient} from 'expo-linear-gradient';
 
@@ -59,7 +59,7 @@ colors: {
 }
 , lineHeights: {
   "2xs": "1.1em",
-  xs: "1.21em",
+  xs: "1.25em",
   sm: "1.355em",
   md: "1.45em",
   lg: "1.65em",
@@ -70,7 +70,7 @@ colors: {
   "5xl": "4.8em",
 }
 , fontSizes: {
-  "2xs": 12,
+  "2xs": 13,
   xs: 15,
   sm: 17,
   md: 19,
@@ -91,8 +91,8 @@ colors: {
 const globalStyles = StyleSheet.create({
   globalContainer: {
     flex: 1, backgroundColor: '#E40412' 
-    , paddingTop: Platform.OS == "android" ? StatusBarAndroid.currentHeight : 0
-    , maxWidth: 560 //pc fix
+    , paddingTop: 0 // for Expo status bar  Platform.OS == "android" ? StatusBarAndroid.currentHeight : 0
+    , maxWidth: 560 //pc develop fix
   }
   , preContainer: { flex: 1 }
   , container: { flex: 1 }
@@ -102,7 +102,7 @@ const globalStyles = StyleSheet.create({
 
 const PageContainerStyle = StyleSheet.create({
   preContainer: {flex: 1 ,backgroundColor: '#E40412' }
-  ,containerIndex: { 
+  ,containerIndex: {  //index page only!
     flex: 1 
     ,backgroundColor: '#010101'
    , justifyContent: 'center'
@@ -110,12 +110,13 @@ const PageContainerStyle = StyleSheet.create({
    
   }
   ,containerRegular: { 
-    flex: 1, borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 2,  borderColor: 'red'
+    flex: 1, borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 2,  borderColor: '#E40412'
     , backgroundColor: '#010101'
     , justifyContent: 'center'
-    , padding: 20
+    , padding: 3
+
     //, alignItems: 'center'
-    , borderRadius: 12
+    //, borderRadius: 12
   }
 });
 
