@@ -4,6 +4,7 @@ import { StatusBar, useWindowDimensions, Image as NativeImage,StyleSheet, ImageB
 import {ScrollView, AspectRatio , Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Image, NativeBaseProvider, Container,} from "native-base";
 import { AntDesign, Ionicons, Zocial, FontAwesome, MaterialIcons, Entypo } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 import { MainPageContainer, PageContainer, Input, Carousel, MovieCard } from '../../../../../Components';
@@ -17,8 +18,8 @@ import { Axios } from '../../../../../Api';
 export default function MyHome({ navigation }){
     const WINDOW_HEIGHT = useWindowDimensions().height;
     const {auth} = useSelectorAuth();
-    const { AddRemoveFavorite } = useMovieDispatch();
-    const moviesSelector = useSelectorMovies();
+    const { AddRemoveFavorite, SetFavorites } = useMovieDispatch();
+    const {favorites} = useSelectorMovies();
     const [selectedMovie, setSelectedMovie] = useState({id:null, title: null, image: null, type: null, year: null});
     const [topMovies, setTopMovies] = useState([]);
     const [newMovies, setNewMovies] = useState([]);
@@ -26,8 +27,13 @@ export default function MyHome({ navigation }){
     const isFocused = useIsFocused();
 
     useEffect(()=>{
+     
       try{
         (async() => {
+            await (async() => {
+              const movieList = await AsyncStorage.getItem('@'+auth.name);
+              if(movieList){ SetFavorites(JSON.parse(movieList)); }
+            })();
             await handleSetNewMovies();
             await handleSetTopMovies();
         })()
@@ -43,7 +49,7 @@ const render = () => (<>
 
       <Box style={{  flex: 2.1, paddingTop: 15, minHeight: 180 }}>
         <Text lineHeight={'xs'} >Recommended Movies</Text>
-        <Carousel data={topMovies} onPress={(movie) => { handleSetSelectedMovie(movie) }} additionalBox={ (movie) => (<NativeButton2 onPress={() => {  handleStarPress(movie) }}><Center style={{backgroundColor: '#2D2D2D', minHeight: 26,borderTopWidth: 1, borderColor: '#2F2F2F', borderBottomRightRadius: 2, borderBottomLeftRadius: 2}}><Icon as={Entypo} name="star" size={6} color={ moviesSelector.favorites.find(x => x.id === movie.id)? '#E40412' : '#f1f1f1' } /></Center></NativeButton2>) }/>
+        <Carousel data={topMovies} onPress={(movie) => { handleSetSelectedMovie(movie) }} additionalBox={ (movie) => (<NativeButton2 onPress={() => {  handleStarPress(movie) }}><Center style={{backgroundColor: '#2D2D2D', minHeight: 26,borderTopWidth: 1, borderColor: '#2F2F2F', borderBottomRightRadius: 2, borderBottomLeftRadius: 2}}><Icon as={Entypo} name="star" size={6} color={ favorites?.find(x => x.id === movie.id)? '#E40412' : '#f1f1f1' } /></Center></NativeButton2>) }/>
       </Box>
 
       <Box style={{ flex: 4, paddingTop: 10, paddingBottom:10, minHeight: 250}}>

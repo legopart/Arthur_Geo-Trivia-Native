@@ -1,7 +1,7 @@
 import axios from 'axios';
-//import {server} from '../Config';
-const axiosBaseUrl = 'http://10.0.2.2:3500'
+import { server } from '../Config';
 
+const axiosBaseUrl = server.AXIOS_BASE_URL;
 
 const axiosFunction = axios.create({
     baseURL: axiosBaseUrl
@@ -21,9 +21,9 @@ export default async function Axios(method, additionUrl, data, additionHeader){
         console.log(':: axios success');
         return response.data;
     }catch(error){
-        console.log(':: axios error1');
-        console.log(JSON.stringify(error.response))
+        console.log(':: axios error');
         if(!error.response?.data) throw 'no server connection' ;
+        if(Number(error.response?.status) > 460)  throw error.response; //modified errors
         throw error.response?.data;
         
 

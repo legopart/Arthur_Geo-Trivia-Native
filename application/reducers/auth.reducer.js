@@ -9,7 +9,8 @@ export const authReducer = createSlice({
     , initialState: initialState
     , reducers: {
         SetAuth: (state, action) => {
-            state.auth = action.payload;
+            const {auth}= action.payload;
+            state.auth = auth;
         }
         , ResetAuth: (state, action) => {
              state.auth =  initialState.auth;
@@ -23,7 +24,7 @@ export const useAuthDispatch = () => {
     const _dispatch = useDispatch();
     const {SetAuth, ResetAuth} = authReducer.actions;
     return ({
-        SetAuth: (auth) => _dispatch(SetAuth(auth))
+        SetAuth: (auth) => _dispatch(SetAuth({auth}))
         , ResetAuth: () =>  _dispatch(ResetAuth())
     })
 };

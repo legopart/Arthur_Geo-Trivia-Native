@@ -76,10 +76,10 @@ return render();}
 
 
 function TabNav() {
-  const moviesSelector = useSelectorMovies();
+  const {favorites} = useSelectorMovies();
   function favoriteStaredCounter(){
-    const filter = moviesSelector.favorites.filter(x => x.stared === true);
-    return filter.length;
+    const filter = favorites?.filter(x => x.stared === true);
+    return filter?.length || 0;
   }
 
 

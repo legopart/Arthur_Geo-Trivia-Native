@@ -3,15 +3,16 @@ import React, { useState, useRef,  useEffect } from 'react';
 import { useWindowDimensions, ImageBackground, KeyboardAvoidingView, Button as NativeButton} from 'react-native';
 import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Image, NativeBaseProvider, Container,} from "native-base";
 import { AntDesign, Ionicons, Zocial, FontAwesome, MaterialIcons, Entypo } from '@expo/vector-icons';
+import {useRoute} from '@react-navigation/native';
 import { MainPageContainer, PageContainer, Input } from '../../Components';
 import {useGoBack, useGoTo, useNavigation} from '../../Hooks';
 import backgroundImage  from '../../assets/background.png'
 import { useAuthDispatch, useSelectorAuth } from '../../reducers';
+
 import { Axios } from '../../Api';
 
 export default function Register(){
-  const authDispatch = useAuthDispatch();
-  const auth = useSelectorAuth();
+  const route = useRoute(); //route.params
   const goTo = useGoTo();
   const nameRef = useRef();
   const passwordRef = useRef();
@@ -19,18 +20,31 @@ export default function Register(){
   const buttonRef = useRef();
   const [errorMessage, setErrorMessage] = useState();
   useEffect(() => {
-    nameRef.current?.focus();
+
+    if(route.params){
+      const {name, password} = route.params;
+      (async() =>{
+        await nameRef.current.setValue(name);
+        await passwordRef.current.setValue(password);
+      })()
+    } else nameRef.current?.focus();
+    
   }, [])
+
+  
+
 const render = () => (<PageContainer index statusBar><ImageBackground source={backgroundImage} resizeMode="cover" style={{justifyContent: "space-around", flex: 1, padding: 20}} imageStyle={{ borderRadius: 12}}>
     <ScrollView>
       <Heading style={{marginVertical: 30}} size={'3xl'}>Menora Flix</Heading>
       <Text style={{marginVertical: 7}} fontSize='3xl'>Register</Text>
       <Input ref={nameRef} label="username" onSubmit={() => passwordRef.current?.focus()} />
-      <Input ref={passwordRef} label="password" onSubmit={() => password2Ref.current?.focus()} />
-      <Input ref={password2Ref} label="password approve" onSubmit={() => buttonRef.current?.focus()} />
-      <Button ref={buttonRef} onPress={ handlePressRegister } style={{marginTop: 35}}>Register</Button>
-      <Button onPress={ handlePressLogin }>move to Login</Button>
+      <Input ref={passwordRef} label="password" type="password" onSubmit={() => password2Ref.current?.focus()} />
+      <Input ref={password2Ref} label="password approve" type="password" onSubmit={() => buttonRef.current?.focus()} />
+      <Button ref={buttonRef} onPress={ handlePressRegister } style={{marginTop: 35}}>Sign In</Button>
       <Box><Text>{errorMessage}</Text></Box>
+      <Box><Text onPress={ handlePressLogin }>Having a user, <Text bold>Login</Text></Text></Box>
+
+      
   </ScrollView>
 </ImageBackground></PageContainer>)
 
@@ -46,7 +60,36 @@ async function handlePressRegister(){
   await nameError('');
   await passwordError('');
   await password2Error('');
-  /* *
+
+  if(password !== password2){password2Ref.current?.setError('passwords not match');return;}
+
+  try{
+      const data = {name: name, password: password};
+      const result = await Axios('POST', '/api/login/register', data, {});
+      if(!result) throw 'Registration fail!';
+      goTo('Login', data);
+  }catch(e){ 
+    if (e.status === 472) nameError(e.data);
+    else if (e.status === 461) passwordError(e.data);
+    else setErrorMessage(e); 
+  }
+}
+
+
+function handlePressLogin(){
+  const name = nameRef.current.getValue();
+  const password = passwordRef.current.getValue();
+  if(name === '' && password === '') goTo('Login');
+  const data = {name: name, password: password};
+  goTo('Login', data);
+}
+
+
+return render();}
+
+
+
+  /* *  previous validator
   const patternName = /^[A-Za-z]{8,}$/;
   const patternPassword = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
   if(name === ''){await nameError('no username set');return;}
@@ -55,23 +98,4 @@ async function handlePressRegister(){
   if(password === ''){await passwordError('no password set');return;}
   if(password.length <= 6){await passwordError('must contain at least 6 chars');return;}
   if(!patternPassword.test(password)){await passwordError('must contain 1 special char, 1number');return;}
-  if(password !== password2){password2Ref.current?.setError('passwords not match');return;}
   /* */
-
-  
-  try{
-      const data = {name: name, password: password};
-      const result = await Axios('POST', '/api/login/register', data, {});
-      if(!result) throw 'Registration fail!';
-    
-      goTo('Login', data);
-  }catch(e){ setErrorMessage(e); }
-}
-
-
-function handlePressLogin(){
-  goTo('Login');
-}
-
-
-return render();}

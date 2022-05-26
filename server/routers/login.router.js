@@ -22,7 +22,7 @@ const { Success, ErrorHandler } = require('../classes');
 const  { UserModel }  = require('../models');
 
 loginRouter.route('/register') //  localhost:3500/api/login/register //register
-.post(  async (req, res, next) => { //validatorUser,
+.post( validatorUser, async (req, res, next) => { //
   console.log(':: user router post');
   errorHandler(req, res, next)( async () => {
     const { name, password } = req.body;

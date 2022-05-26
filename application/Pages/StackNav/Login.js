@@ -13,8 +13,7 @@ import { Axios } from '../../Api';
 export default function Login(){
 
   const route = useRoute(); //route.params
-  const authDispatch = useAuthDispatch();
-  const auth = useSelectorAuth();
+  const { SetAuth }  = useAuthDispatch();
   const goTo = useGoTo();
   const nameRef = useRef();
   const passwordRef = useRef();
@@ -29,27 +28,20 @@ export default function Login(){
         await passwordRef.current.setValue(password);
       })()
     }
-    else nameRef.current?.focus();
+   // else nameRef.current?.focus();
   }, []);
 
-
 const render = () => (<PageContainer index statusBar><ImageBackground source={backgroundImage} resizeMode="cover" style={{justifyContent: "space-around", flex: 1, padding: 20}} imageStyle={{ borderRadius: 12}}>
-    <ScrollView>
-      <Heading style={{marginVertical: 30}} size={'3xl'}>Menora Flix</Heading>
-      <Text style={{marginVertical: 7}} fontSize='3xl'>Login</Text>
-      <Input ref={nameRef} label="username" />
-      <Input ref={passwordRef} label="password" />
-      <Button ref={buttonRef} onPress={ handlePressLogin } style={{marginTop: 35}}>Login</Button>
-      <Button onPress={ handlePressMyHome }>MyHome</Button>
-      <Button onPress={ handlePressRegister }>move to Register</Button>
-      <Box><Text>{errorMessage}</Text></Box>
+  <ScrollView>
+    <Heading style={{marginVertical: 30}} size={'3xl'}>Menora Flix</Heading>
+    <Text style={{marginVertical: 7}} fontSize='3xl'>Login</Text>
+    <Input ref={nameRef} label="username" />
+    <Input ref={passwordRef} label="password" type="password" />
+    <Button ref={buttonRef} onPress={ handlePressLogin } style={{marginTop: 35}}>Login</Button>
+    <Box><Text>{errorMessage}</Text></Box>
+    <Box><Text onPress={ handlePressRegister }>First time here, <Text bold>Sign In</Text></Text></Box>
   </ScrollView>
 </ImageBackground></PageContainer>)
-
-
-async function handlePressMyHome(){
-  authDispatch.SetAuth({name: 'arthur'});
-}
 
 async function handlePressLogin(){
   const name = nameRef.current.getValue();
@@ -61,48 +53,33 @@ async function handlePressLogin(){
   await nameError('');
   await passwordError('');
 
-  /* *
-  const patternName = /^[A-Za-z]{8,}$/;
-  const patternPassword = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
-  if(name === ''){await nameError('no username set');return;}
-  if(name.length <= 8){await nameError('must contain at least 8 chars');return;}
-  if(!patternName.test(name)){await nameError('must contain only letters');return;}
-  if(password === ''){await passwordError('no password set');return;}
-  if(password.length <= 6){await passwordError('must contain at least 6 chars');return;}
-  if(!patternPassword.test(password)){await passwordError('must contain 1 special char, 1number');return;}
-  /* */
-
   try{
       const data = {name: name, password: password};
       const result = await Axios('POST', '/api/login/', data, {});
       if(!result) throw 'Login fail!';
-      authDispatch.SetAuth(result);
-  }catch(e){ setErrorMessage(e); }
+      SetAuth(result);
+  }catch(e){ 
+    if (e.status === 472) nameError(e.data);
+    else if (e.status === 461) passwordError(e.data);
+    else setErrorMessage(e); 
+  }
 }
-
-
 
 
 async function checkAccessToken(){
-
   try{
       const result = await Axios('PATCH', '/api/login/', data, {});
       if(!result) throw 'Login fail!';
-      authDispatch.SetAuth(result);
+      SetAuth(result);
   }catch(e){  }
-
-
-  new DatabaseRequest( () => tokenRenewApi() )
-    .GoodResult( (result) => {
-      if(!result._id || !result.accessToken) return;
-      setAuth( result ); goFrom();
-      } )
-    .Build(setAxiosLoading);
 }
 
-
 function handlePressRegister(){
-  goTo('Register');
+  const name = nameRef.current.getValue();
+  const password = passwordRef.current.getValue();
+  if(name === '' && password === '') goTo('Register');
+  const data = {name: name, password: password};
+  goTo('Register', data);
 }
 
 
