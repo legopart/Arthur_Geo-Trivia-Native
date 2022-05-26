@@ -8,12 +8,23 @@ export const movieReducer = createSlice({
     name: 'movieReducer'
     , initialState: initialState
     , reducers: {
-        AddFavorite: (state, action) => {
-            state.favorites = [{...action.payload}, ...state.favorites];
+        AddRemoveFavorite: (state, action) => {
+            if(state.favorites.find(x => x.id === action.payload.id)) state.favorites = state.favorites.filter(x => x.id !== action.payload.id);
+            else state.favorites = [{...action.payload, stared: true}, ...state.favorites];
+        }
+        , SetFavorites: (state, action) => {
+           // state.favorites = [...action.payload];
         }
         , ResetFavMovies: (state, action) => {
-                // change only unStar each movie
             state.favorites =  initialState.favorites;
+        }
+        , ClearStarsFavMovies: (state, action) => {
+            const withoutStars = [];
+            state.favorites.map((x) => {
+                x.stared = false;
+                withoutStars.push(x)
+            });
+            state.favorites =  withoutStars;
         }
     }
 });
@@ -22,10 +33,12 @@ export const useSelectorMovies = () => useSelector(s=>s.movieReducer);
 
 export const useMovieDispatch = () => {
     const _dispatch = useDispatch();
-    const {AddFavorite, ResetFavMovies} = movieReducer.actions;
+    const {AddRemoveFavorite, SetFavorites, ResetFavMovies, ClearStarsFavMovies} = movieReducer.actions;
     return ({
-        AddFavorite: (movie) => _dispatch(AddFavorite(movie))
+        AddRemoveFavorite: (movie) => _dispatch(AddRemoveFavorite(movie))
+        , SetFavorites: (movies) =>  _dispatch(SetFavorites(movies))
         , ResetFavMovies: () =>  _dispatch(ResetFavMovies())
+        , ClearStarsFavMovies: () =>  _dispatch(ClearStarsFavMovies())
     })
 };
 

@@ -1,6 +1,6 @@
 
 import React, { useState, useRef,  useEffect } from 'react';
-import {ImageBackground, KeyboardAvoidingView, Button as NativeButton} from 'react-native';
+import { useWindowDimensions, ImageBackground, KeyboardAvoidingView, Button as NativeButton} from 'react-native';
 import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Image, NativeBaseProvider, Container,} from "native-base";
 import { AntDesign, Ionicons, Zocial, FontAwesome, MaterialIcons, Entypo } from '@expo/vector-icons';
 import { MainPageContainer, PageContainer, Input } from '../../Components';
@@ -17,17 +17,22 @@ const render = () => (<PageContainer index statusBar><ImageBackground source={ba
     <ScrollView>
       <Heading style={{marginVertical: 30}} size={'3xl'}>Menora Flix</Heading>
       <Text style={{marginVertical: 7}} fontSize='3xl'>Login</Text>
-      <Input selectionColor={'white'} label="username" />
+      <Input label="username" />
       <Input label="password" />
       <Button style={{marginTop: 35}}>Login</Button>
       <Button onPress={ handlePressMyHome }>MyHome</Button>
+      <Button onPress={ handlePressRegister }>move to Register</Button>
       <Box><Text>{auth.auth?.name}</Text></Box>
   </ScrollView>
 </ImageBackground></PageContainer>)
 
 function handlePressMyHome(){
   const data = {name: 'arthur'};
-  authDispatch.SetAuth(data, ()=> goTo('DrawerNav'));
+  authDispatch.SetAuth(data);
+}
+
+function handlePressRegister(){
+  goTo('Register');
 }
 
 

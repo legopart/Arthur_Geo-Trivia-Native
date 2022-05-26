@@ -21,7 +21,7 @@ return (<>
   <Box style={leftIcon || rightButton ? { flexDirection: 'row', alignItems: 'center' } : { minWidth: '50%',alignItems: 'center'}}>
 {leftIcon ? <Box style={{marginRight: 2}}>{leftIcon}</Box> : null}
 <Box style={leftIcon || rightButton ? {flex: 1} : {width: '100%', minHeight: 30}}>
-  <BaseInput selectionColor='red' style={{ ...styleInput.input ,...(value ? {} : styleInput.placeholder) , ...style}} variant="unstyled" placeholderTextColor={'#a1a1a1'} value={value} size='2xl' {...props}  placeholder={placeholder} onChangeText={async(e) => {await setValue(e); await onChangeText&&onChangeText()}} returnKeyType={onSubmit ?'next': 'done'} onSubmitEditing={onSubmit} ref={textInputRef} /></Box>
+  <BaseInput  selectionColor={'#f1f1f1'} style={{ ...styleInput.input ,...(value ? {} : styleInput.placeholder) , ...style}} variant="unstyled" placeholderTextColor={'#a1a1a1'} value={value} size='2xl' {...props}  placeholder={placeholder} onChangeText={async(e) => {await setValue(e); await onChangeText&&onChangeText()}} returnKeyType={onSubmit ?'next': 'done'} onSubmitEditing={onSubmit} ref={textInputRef} /></Box>
 {rightButton ? <Box style={{marginLeft: 8,height: '100px'}}>{rightButton}</Box>: null}
 
 </Box>

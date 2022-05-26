@@ -10,10 +10,8 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 
 import { MainPageContainer, PageContainer, Input } from './Components';
 import {useGoBack, useGoTo, useNavigation} from './Hooks';
-import {Login, Logout, MyHome, Favorites} from './Pages';
-import { ReduxProvider } from './reducers';
-import { useSelectorAuth } from './reducers';
-
+import {Login, Register, Logout, MyHome, Favorites} from './Pages';
+import { ReduxProvider, useSelectorAuth , useSelectorMovies } from './reducers';
 
 
 
@@ -25,100 +23,46 @@ export default function App() {
 
 return (<>
 <ReduxProvider>
-  <MainPageContainer>
-    <NavigationContainer> 
-      
-      <IdentifyRedirect />
-
-     
-    </NavigationContainer>
-  </MainPageContainer>
+  <MainPageContainer><NavigationContainer> 
+      <StackNav />
+    </NavigationContainer></MainPageContainer>
 </ReduxProvider>
 </>);}
 
 
-function IdentifyRedirect(){
- const auth = useSelectorAuth();
-return (<>
-  { auth.auth?.name ? 
-     <StackNav /> : <Login />
-  }
-  </>)
-}
 
 
 
 
 function StackNav() {
+  const auth = useSelectorAuth();
 const render = () => (<>
-<Stack.Navigator  screenOptions={{ headerShown: false }}>
-  <Stack.Screen name='DrawerNav' options={{ }}  component={DrawerNav}/>
-  <Stack.Screen name='Logout' options={{ }}  component={Logout}/>
-  
-</Stack.Navigator>
-
+  { auth.auth?.name ? <DrawerNav /> :
+    <Stack.Navigator  screenOptions={{ headerShown: false }}>
+      <Stack.Screen name='Login' options={{ }}  component={Login}/>
+      <Stack.Screen name='Register' options={{ }}  component={Register}/>
+    </Stack.Navigator>
+  }
 </>);
 return render();}
   
-
-
-
-function CustomDrawerContent(props) {
-  const render = () => (
-    <DrawerContentScrollView {...props}>
-      <View style={styles.menuContainer}>
-        <View style={[ styles.menuItemsCard, { backgroundColor: '#fff2df', width: width, height: width }, ]}>
-          <> <View style={[styles.circleContainer, { backgroundColor: '#FFC56F' }]}>
-              <Feather travel name="briefcase" size={25} color="#fbae41" />
-              <DrawerItem label="Screen1" labelStyle={{ color: '#fbae41', fontSize: 10 }}
-                onPress={() => { props.navigation.navigate('Screen1');}}
-              />
-          </View> </>
-          <DrawerItem style={{ position: 'absolute', left: 0, width: width, height: width, }}
-            label="Screen2" labelStyle={{ color: '#609806' }}
-            onPress={() => { props.navigation.navigate('Screen1'); }}
-          />
-        </View>
-        <View style={[ styles.menuItemsCard, { backgroundColor: '#EFFFD5', width: width, height: width }, ]}>
-          <View style={[styles.circleContainer, { backgroundColor: '#b5ff39' }]}>
-            <Feather Medical name="briefcase" size={25} color="#609806" />
-          </View>
-          <DrawerItem style={{ position: 'absolute', left: 0, width: width, height: width, }}
-            label="Screen2" labelStyle={{ color: '#609806' }}
-            onPress={() => { props.navigation.navigate('StackNav'); }}
-          />
-        </View>
-      </View>
-    </DrawerContentScrollView>
-  );
-
-
-  const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: 'center', alignItems: 'center', },
-    menuContainer: { flex: 1, flexDirection: 'row', justifyContent: 'space-evenly', },
-    menuItemsCard: {flexDirection: 'column',justifyContent: 'center', alignItems: 'center', borderRadius: 10,},
-    circleContainer: {width: 50, height: 50, borderRadius: 25, padding: 10, },
-  });
-
-return render();}
-
-
 
 
 function  DrawerNav() {
   const goTo = useGoTo();
   const height = useWindowDimensions().height;
 const render = () => (<>
-    <Drawer.Navigator drawerContent={() => <DrawerNavSideMenu />}  screenOptions={{  headerShown: false, drawerContentStyle: { backgroundColor: '#010101'} }} initialRouteName="MyHome" swipeEnabled swipeEdgeWidth overlayColor={1} >
+    <Drawer.Navigator drawerContent={() => <DrawerNavSideMenu />}  screenOptions={{ drawerStyle: { backgroundColor: '#010101', width: '100%' }, headerShown: false, drawerContentStyle: { backgroundColor: '#010101'} }} initialRouteName="MyHome" swipeEnabled={false} swipeEdgeWidth={false}  swipeMinDistance overlayColor={1} >
       <Drawer.Screen name="TabNav" options={{ drawerLabel: () => null, drawerIcon: () => null, title: null}}  component={TabNav} />
       <Drawer.Screen name="Logout" options={{ drawerLabel: () => (<Button >Logout</Button>),title: 'Logout'}}  component={Logout} />
     </Drawer.Navigator>
 </>);
 
 
+
 function DrawerNavSideMenu({style ,...props}){
 return (<>
-<DrawerContentScrollView {...props} style={{backgroundColor: 'black', padding: 4, flex: 1,  ...style}}>
+<DrawerContentScrollView {...props} style={{backgroundColor: '#010101', padding: 4, flex: 1,  ...style}}>
 <Box style={{minHeight: height*0.9,    flex: 1,}}>
   <Box style={{flex: 1}}></Box>
   <Box> <Button onPress={()=>{goTo('Logout')}}>Logout</Button> </Box>
@@ -131,10 +75,16 @@ return render();}
 
 
 
-
 function TabNav() {
+  const moviesSelector = useSelectorMovies();
+  function favoriteStaredCounter(){
+    const filter = moviesSelector.favorites.filter(x => x.stared === true);
+    return filter.length;
+  }
+
+
 const render = () => (<><Tab.Navigator initialRouteName={"MyHome"} activeColor="#d1d1d1" inactiveColor="#ffffff" barStyle={{ backgroundColor: '#010101', padding: 4}}>
-  <Tab.Screen name={"StackNav2"} component={MyHome} options={{ 
+  <Tab.Screen name={"StackNav2"} component={StackNav2} options={{ 
     tabBarLabel: <Text fontSize='xs' lineHeight={'xl'}>My Home</Text>
   , tabBarIcon: ({ focused, color }) => (
     <Box style={{position: 'absolute', left: -5, top: -12}}>
@@ -146,34 +96,44 @@ const render = () => (<><Tab.Navigator initialRouteName={"MyHome"} activeColor="
     , tabBarIcon: ({ focused, color }) => (
       <Box style={{position: 'absolute', left: -5, top: -10}}>
         <Icon as={Fontisto} name="star" size={9} color={color} />
-        <Badge value={5} />
+{favoriteStaredCounter() > 0 ?
+        <Badge value={favoriteStaredCounter()} />: null
+
+}
+
       </Box>),
     }} />
 </Tab.Navigator></>);
-
-function StackNav2() {
-return (<>
-<Stack.Navigator  screenOptions={{ ...headerGlobalStyle }}>
-  <Stack.Screen name='MyHome' options={{ headerLargeStyle: () => <Box>My Home</Box> }}  component={MyHome}/>
-</Stack.Navigator>
-</>);}
 
 function Badge({value}){
   return (<Box  bg="#F53930" rounded="full" mt={-8} mr={-4} zIndex={1} variant="solid" alignSelf="flex-end" style={{ minWidth: 20, minHeight: 20}} >
               <Text fontSize={'xs'} lineHeight={'xs'} >{value}</Text>
           </Box>)}
 
+
+return render();}
+
+
+
+
+function StackNav2() {
+const render = () => (<>
+<Stack.Navigator  screenOptions={{ ...headerGlobalStyle }}>
+  <Stack.Screen name='MyHome'  options={{ headerTitle: ()=> <Text fontSize={'md'}>My Home</Text>, ...headerStyle /*header: () =>(<></>),*/}}  component={MyHome}/>
+</Stack.Navigator>
+</>);
 const headerGlobalStyle = {
   headerStyle: { backgroundColor: '#E40412'}
   , headerTintColor: '#E1E1E1'
   , headerTitleAlign: "center"
-  , height: 50
   , headerTitleStyle: { fontWeight: 'bold' }
  // , headerRight: () => (<Button onPress={() => alert('Created by Arthur Zarankin!')}>Info</Button>)
-  , headerShown: true
+ // , headerShown: true
 }
-const headerStyle = { }
-
+const headerStyle = { 
+  
+}
 
 return render();}
+
 

@@ -1,4 +1,6 @@
 import Input from './Input';
 import MainPageContainer from './MainPageContainer';
 import PageContainer from './PageContainer';
-export { Input, MainPageContainer, PageContainer };
+import Carousel from './Carousel';
+import MovieCard from './MovieCard'
+export { Input, MainPageContainer, PageContainer, Carousel, MovieCard };

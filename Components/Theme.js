@@ -102,22 +102,29 @@ const globalStyles = StyleSheet.create({
 
 const PageContainerStyle = StyleSheet.create({
   preContainer: {flex: 1 ,backgroundColor: '#E40412' }
+
   ,containerIndex: {  //index page only!
     flex: 1 
     ,backgroundColor: '#010101'
    , justifyContent: 'center'
    , borderRadius: 12
-   
   }
+
   ,containerRegular: { 
-    flex: 1, borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 2,  borderColor: '#E40412'
+    flex: 1
+    //, borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 2,  borderColor: '#E40412'
     , backgroundColor: '#010101'
     , justifyContent: 'center'
     , padding: 3
-
     //, alignItems: 'center'
-    //, borderRadius: 12
   }
+
+
+  ,containerTopRadius: { 
+    borderTopStartRadius: 12
+    , borderTopEndRadius: 12
+  }
+
 });
 
 const globalStyleConfig = {
