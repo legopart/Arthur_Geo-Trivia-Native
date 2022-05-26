@@ -28,7 +28,8 @@ app.route("/") .get(async (req, res) => res.status(200).sendFile(path.join(__dir
 app.use("/api/login", routers.loginRouter); //verifyJWT set inside for not registration part!
 
 // //if (process.env.NODE_ENV === 'production') 
-// //app.use(middlewares.verifyJWT); //403 //Token require middleware
+app.use(middlewares.verifyJWT); //403 //Token require middleware
+
 // //app.use("/api/user", routers.userRouter);
 
 app.use("/api/movie", routers.movieRouter);

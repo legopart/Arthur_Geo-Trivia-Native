@@ -16,7 +16,7 @@ import { Axios } from '../../../../../Api';
 
 export default function MyHome({ navigation }){
     const WINDOW_HEIGHT = useWindowDimensions().height;
-    const auth = useSelectorAuth();
+    const {auth} = useSelectorAuth();
     const { AddRemoveFavorite } = useMovieDispatch();
     const moviesSelector = useSelectorMovies();
     const [selectedMovie, setSelectedMovie] = useState({id:null, title: null, image: null, type: null, year: null});
@@ -27,9 +27,11 @@ export default function MyHome({ navigation }){
 
     useEffect(()=>{
       try{
-        handleSetNewMovies();
-        handleSetTopMovies();
-      }catch(e){ alert('Sorry, No server Result'); }
+        (async() => {
+            await handleSetNewMovies();
+            await handleSetTopMovies();
+        })()
+      }catch(e){ alert(e); }
     }, []);
 
 
@@ -60,13 +62,21 @@ const render = () => (<>
 </>)
 
 async function handleSetNewMovies(){
-  const result = await Axios('GET', '/api/movie/new', {}, {});
+  let result;
+  try{
+    result = await Axios('GET', '/api/movie/new', {}, {'authorization':  auth.accessToken});
+    if(!result) throw new Error();
+  }catch(e){alert(e)}
   setNewMovies(result);
 }
 
 async function handleSetTopMovies(){
-  const result = await Axios('GET', '/api/movie/top', {}, {});
-  if(result[0]) setSelectedMovie(result[0]);
+  let result;
+  try{
+    result = await Axios('GET', '/api/movie/top', {}, {'authorization':  auth.accessToken});
+    if(!result) throw new Error();
+    if(result && result[0]) setSelectedMovie(result[0]);
+  }catch(e){alert( e)}
   setTopMovies(result);
 }
 

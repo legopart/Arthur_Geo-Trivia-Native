@@ -83,10 +83,10 @@ async function handlePressLogin(){
 
 
 
-function checkAccessToken(){
+async function checkAccessToken(){
 
   try{
-      const result = await Axios('POST', '/api/login/', data, {});
+      const result = await Axios('PATCH', '/api/login/', data, {});
       if(!result) throw 'Login fail!';
       authDispatch.SetAuth(result);
   }catch(e){  }

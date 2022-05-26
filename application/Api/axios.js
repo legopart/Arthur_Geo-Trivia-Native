@@ -19,12 +19,14 @@ export default async function Axios(method, additionUrl, data, additionHeader){
             , headers: additionHeader
         });
         console.log(':: axios success');
-
         return response.data;
     }catch(error){
-        console.log(':: axios error');
-        if(!error.response?.data) throw (()=>'no server connection')() ;
+        console.log(':: axios error1');
+        console.log(JSON.stringify(error.response))
+        if(!error.response?.data) throw 'no server connection' ;
         throw error.response?.data;
+        
+
     }
 }
 

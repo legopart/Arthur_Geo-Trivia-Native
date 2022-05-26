@@ -1,9 +1,13 @@
 
 import React, { useEffect } from 'react';
-import {useAuthDispatch} from '../../../reducers'
-
+import {useAuthDispatch ,useSelectorAuth} from '../../../reducers'
+import { Axios } from '../../../Api';
 export default function Logout(){
     const { ResetAuth } = useAuthDispatch();
-    useEffect(()=>{ ResetAuth(); }, [])
+    const {auth} = useSelectorAuth();
+    useEffect(()=>{ 
+        try{ (async()=>{ await Axios('DELETE', '/api/login/', auth, {}); })() }catch{}
+        ResetAuth(); 
+    }, [])
 return (<></>);
 }

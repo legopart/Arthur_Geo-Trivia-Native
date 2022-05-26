@@ -19,9 +19,7 @@ let refreshToken_List = [];  //set it to database
 
 const { errorHandler, validatorUser } = require('../middlewares');
 const { Success, ErrorHandler } = require('../classes');
-
 const  { UserModel }  = require('../models');
-
 
 loginRouter.route('/register') //  localhost:3500/api/login/register //register
 .post(  async (req, res, next) => { //validatorUser,
@@ -30,18 +28,12 @@ loginRouter.route('/register') //  localhost:3500/api/login/register //register
     const { name, password } = req.body;
     const user = await UserModel.findOne({ name: name });
     if (user !== null) throw new ErrorHandler(452, 'user already exist!');
-    const data = { name, password };
-    data.password = await bcrypt.hash(data.password, 10);
-    const result = await new UserModel(data).save();
-
-    // console.log(':: 4365345643');
-    // console.log(name);
-    // console.log(password);
-
+    const userClone = { name, password };
+    userClone.password = await bcrypt.hash(userClone.password, 10);
+    const result = await new UserModel(userClone).save();
     return new Success(200, result);
     });  //error handler 
 })
-
 
 loginRouter.route('/') //  /api/login
 .post( async (req, res, next) => {
@@ -56,52 +48,48 @@ loginRouter.route('/') //  /api/login
     return loginUserSuccess(user, res); //set auth login
     });  //error handler
 })
-.patch( (req, res, next) => {
+.patch( (req, res, next) => { //restore token
   console.log(':: login router patch');
   errorHandler(req, res, next)( async () => {
-  const refreshToken = ( req.cookies && req.cookies[cookieName]) || req.headers['authorization'] || req.header['x-auth-token'] || req.body['token'] || req.query['token'];
-  if(!refreshToken) throw new ErrorHandler(401, 'Refresh Token missing.');
-
-  let userTokenValue = jwt.verify(refreshToken, refreshTokenSecret);
-  if (!userTokenValue) throw new ErrorHandler(403, 'Wrong Refresh Token supplied.');
-  if(!refreshToken_List.find(x => x.user_id === userTokenValue.user_id)) throw new ErrorHandler(403, 'Refresh Token not stored.');
-  const accessToken = generateAccessToken({ user_id: userTokenValue.user_id, name: userTokenValue.name });//(user)
-  const user = await UserModel.findById( userTokenValue.user_id );
-  const userClone = JSON.parse(JSON.stringify(user));
-  delete userClone.password;
-  userClone.accessToken = 'Bearer ' + accessToken;
-  const result = userClone;
-
-  if(!result) throw new Error();
-  return new Success(200, result);
-
+    const refreshToken = ( req.cookies && req.cookies[cookieName]) || req.headers['authorization'] || req.header['x-auth-token'] || req.body['token'] || req.query['token'];
+    if(!refreshToken) throw new ErrorHandler(401, 'Refresh Token missing.');
+    let userTokenValue = jwt.verify(refreshToken, refreshTokenSecret);
+    if (!userTokenValue) throw new ErrorHandler(403, 'Wrong Refresh Token supplied.');
+    if(!refreshToken_List.find(x => x.name === userTokenValue.name)) throw new ErrorHandler(403, 'Refresh Token not stored.');
+    const accessToken = generateAccessToken({ name: userTokenValue.name, password: userTokenValue.password });//(user)
+    const user = await UserModel.findById( userTokenValue.name );
+    const userClone = JSON.parse(JSON.stringify(user));
+    delete userClone.password;
+    userClone.accessToken = 'Bearer ' + accessToken;
+    const data = userClone;
+    return new Success(200, data);
   });  //error handler 
 })
 .delete( (req, res, next) => {
   console.log(':: login router delete');
   errorHandler(req, res, next)( async () => {
-    const refreshToken = ( req.cookies && req.cookies[cookieName]) || req.headers['authorization'] || req.header['x-auth-token'] || req.body['token'] || req.query['token'];
-    if(!refreshToken) return new Success(200);
-    if( req.cookies && req.cookies[cookieName] ) res.clearCookie(cookieName ,cookieSettings);
-    jwt.verify(refreshToken, refreshTokenSecret, (err, userTokenValue) => {
-      if(!err) refreshToken_List = refreshToken_List.filter(x => x.user_id !== userTokenValue.user_id);
-    });
+    try{
+      const refreshToken = ( req.cookies && req.cookies[cookieName]) || req.headers['authorization'] || req.header['x-auth-token'] || req.body['token'] || req.query['token'];
+      if(!refreshToken) return new Success(200);
+      if( req.cookies && req.cookies[cookieName] ) res.clearCookie(cookieName ,cookieSettings);
+      jwt.verify(refreshToken, refreshTokenSecret, (err, userTokenValue) => {
+        if(!err) refreshToken_List = refreshToken_List.filter(x => x.name !== userTokenValue.name);
+      });
+    }catch(e){}
+    
     return new Success(200);
   });  //error handler
 })
 ;
 
 
-
-
 module.exports = loginRouter;
 
 
-
 function loginUserSuccess(user, res){ //cookie + accessToken and auth data for login
-    const accessToken = generateAccessToken({ user_id: user._id, email: user.email });
-    const refreshToken = jwt.sign({ user_id: user._id, email: user.email }, refreshTokenSecret, { expiresIn: refreshTokenTimeOut } );
-    refreshToken_List.push({user_id: user._id.toHexString(), token: refreshToken});
+    const accessToken = generateAccessToken({ name: user.name, password:  user.password });
+    const refreshToken = jwt.sign({ name: user.name, password:  user.password }, refreshTokenSecret, { expiresIn: refreshTokenTimeOut } );
+    refreshToken_List.push({name: user.name, token: refreshToken});// user_id: user._id.toHexString()
     res.cookie(cookieName, refreshToken, cookieSettings); //change
     const data = JSON.parse(JSON.stringify(user));
     delete data.password;
