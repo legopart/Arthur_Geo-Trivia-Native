@@ -26,6 +26,7 @@ const render = () => (<PageContainer index statusBar><ImageBackground source={ba
   </ScrollView>
 </ImageBackground></PageContainer>)
 
+
 function handlePressMyHome(){
   const data = {name: 'arthur'};
   authDispatch.SetAuth(data);
