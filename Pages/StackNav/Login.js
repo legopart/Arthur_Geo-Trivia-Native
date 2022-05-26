@@ -21,7 +21,7 @@ const render = () => (<PageContainer index statusBar><ImageBackground source={ba
       <Input label="password" />
       <Button style={{marginTop: 35}}>Login</Button>
       <Button onPress={ handlePressMyHome }>MyHome</Button>
-      <Button onPress={ handlePressRegister }>move to Register</Button>
+      
       <Box><Text>{auth.auth?.name}</Text></Box>
   </ScrollView>
 </ImageBackground></PageContainer>)
