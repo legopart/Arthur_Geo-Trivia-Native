@@ -23,8 +23,7 @@ const routers = require("./routers");
 
 const public_folder = 'public_folder';
 app.use("/", express.static(path.join(__dirname, public_folder)));  //global folder
-app.route("/") .get(async (req, res) => res.status(200).sendFile(path.join(__dirname, public_folder, "index.html")) );
-
+app.route("/").get(async (req, res) => res.status(200).sendFile(path.join(__dirname, public_folder, "index.html")) );
 app.use("/api/login", routers.loginRouter); //verifyJWT set inside for not registration part!
 
 // //if (process.env.NODE_ENV === 'production') 
