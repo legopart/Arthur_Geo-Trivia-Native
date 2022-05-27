@@ -3,12 +3,16 @@ import React, { useState, useRef,  useEffect } from 'react';
 import { useWindowDimensions, ImageBackground, KeyboardAvoidingView, Button as NativeButton} from 'react-native';
 import { ScrollView, Heading, Text, Flex,Center, Box, Spacer , Button, Icon, Image, NativeBaseProvider, Container,} from "native-base";
 import { AntDesign, Ionicons, Zocial, FontAwesome, MaterialIcons, Entypo } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { MainPageContainer, PageContainer, Input } from '../../Components';
 import {useGoBack, useGoTo, useNavigation} from '../../Hooks';
 import backgroundImage  from '../../assets/background.png'
 import { useAuthDispatch, useSelectorAuth } from '../../reducers';
 import {useRoute} from '@react-navigation/native';
 import { Axios } from '../../Api';
+
+
 
 export default function Login(){
 
@@ -21,6 +25,7 @@ export default function Login(){
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(()=>{
+    // checkAccessToken();
     if(route.params){
       const {name, password} = route.params;
       (async() =>{
@@ -39,7 +44,7 @@ const render = () => (<PageContainer index statusBar><ImageBackground source={ba
     <Input ref={passwordRef} label="password" type="password" />
     <Button ref={buttonRef} onPress={ handlePressLogin } style={{marginTop: 35}}>Login</Button>
     <Box><Text>{errorMessage}</Text></Box>
-    <Box><Text onPress={ handlePressRegister }>First time here, <Text bold>Sign In</Text></Text></Box>
+    <Box><Text onPress={ handlePressRegister }>First time here?, <Text bold>Sign In</Text></Text></Box>
   </ScrollView>
 </ImageBackground></PageContainer>)
 
@@ -65,12 +70,18 @@ async function handlePressLogin(){
   }
 }
 
-
 async function checkAccessToken(){
   try{
+        
+      const refreshToken = await AsyncStorage.getItem('@token');
+      if(!refreshToken) return;
+      const data = {token: refreshToken};
       const result = await Axios('PATCH', '/api/login/', data, {});
-      if(!result) throw 'Login fail!';
+      if(!result) return;
       SetAuth(result);
+
+  
+
   }catch(e){  }
 }
 

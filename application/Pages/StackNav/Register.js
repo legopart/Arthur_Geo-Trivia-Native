@@ -31,8 +31,6 @@ export default function Register(){
     
   }, [])
 
-  
-
 const render = () => (<PageContainer index statusBar><ImageBackground source={backgroundImage} resizeMode="cover" style={{justifyContent: "space-around", flex: 1, padding: 20}} imageStyle={{ borderRadius: 12}}>
     <ScrollView>
       <Heading style={{marginVertical: 30}} size={'3xl'}>Menora Flix</Heading>
@@ -42,9 +40,7 @@ const render = () => (<PageContainer index statusBar><ImageBackground source={ba
       <Input ref={password2Ref} label="password approve" type="password" onSubmit={() => buttonRef.current?.focus()} />
       <Button ref={buttonRef} onPress={ handlePressRegister } style={{marginTop: 35}}>Sign In</Button>
       <Box><Text>{errorMessage}</Text></Box>
-      <Box><Text onPress={ handlePressLogin }>Having a user, <Text bold>Login</Text></Text></Box>
-
-      
+      <Box><Text onPress={ handlePressLogin }>Having a user?, <Text bold>Login</Text></Text></Box>
   </ScrollView>
 </ImageBackground></PageContainer>)
 

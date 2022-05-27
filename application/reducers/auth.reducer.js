@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const initialState = { auth: {} }
 
@@ -10,6 +12,10 @@ export const authReducer = createSlice({
     , reducers: {
         SetAuth: (state, action) => {
             const {auth}= action.payload;
+            try{(async() => { 
+                const token = JSON.stringify(auth.refreshToken);
+                 await AsyncStorage.setItem('@token', token);
+            })(); }catch(e){};
             state.auth = auth;
         }
         , ResetAuth: (state, action) => {

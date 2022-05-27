@@ -15,11 +15,11 @@ const bcrypt = require("bcrypt");
 
 const cookieSettings = { httpOnly: true, sameSite: 'None', secure: true, maxAge: cookieTimeout }; 
 
-let refreshToken_List = [];  //set it to database
+//let refreshToken_List = [];  //set it to database
 
 const { errorHandler, validatorUser } = require('../middlewares');
 const { Success, ErrorHandler } = require('../classes');
-const  { UserModel }  = require('../models');
+const  { UserModel, TokenModel }  = require('../models');
 
 loginRouter.route('/register') //  localhost:3500/api/login/register //register
 .post( validatorUser, async (req, res, next) => { //
@@ -53,16 +53,28 @@ loginRouter.route('/') //  /api/login
   errorHandler(req, res, next)( async () => {
     const refreshToken = ( req.cookies && req.cookies[cookieName]) || req.headers['authorization'] || req.header['x-auth-token'] || req.body['token'] || req.query['token'];
     if(!refreshToken) throw new ErrorHandler(401, 'Refresh Token missing.');
-    let userTokenValue = jwt.verify(refreshToken, refreshTokenSecret);
-    if (!userTokenValue) throw new ErrorHandler(403, 'Wrong Refresh Token supplied.');
-    if(!refreshToken_List.find(x => x.name === userTokenValue.name)) throw new ErrorHandler(403, 'Refresh Token not stored.');
-    const accessToken = generateAccessToken({ name: userTokenValue.name, password: userTokenValue.password });//(user)
-    const user = await UserModel.findById( userTokenValue.name );
-    const userClone = JSON.parse(JSON.stringify(user));
-    delete userClone.password;
-    userClone.accessToken = 'Bearer ' + accessToken;
-    const data = userClone;
-    return new Success(200, data);
+
+
+    try{
+      jwt.verify(refreshToken, refreshTokenSecret,  async(err, userTokenValue) => {
+        if(err) throw new ErrorHandler(403, 'Wrong Refresh Token supplied.');
+        const storedToken = await TokenModel.findOne({name: userTokenValue.name, refreshToken: refreshToken});
+        if (!storedToken) throw new ErrorHandler(403, 'Refresh Token not stored.');
+
+        const accessToken = generateAccessToken({ name: userTokenValue.name, password: userTokenValue.password });//(user)
+        const user = await UserModel.findById( userTokenValue.name );
+        const userClone = JSON.parse(JSON.stringify(user));
+        delete userClone.password;
+        userClone.accessToken = 'Bearer ' + accessToken;
+        const data = userClone;
+        return new Success(200, data);
+
+
+    });}catch(e){}
+    
+    throw new ErrorHandler(403, 'No Refresh Token.');
+
+    
   });  //error handler 
 })
 .delete( (req, res, next) => {
@@ -70,10 +82,14 @@ loginRouter.route('/') //  /api/login
   errorHandler(req, res, next)( async () => {
     try{
       const refreshToken = ( req.cookies && req.cookies[cookieName]) || req.headers['authorization'] || req.header['x-auth-token'] || req.body['token'] || req.query['token'];
+      console.log(refreshToken)
+      console.log(refreshToken)
       if(!refreshToken) return new Success(200);
       if( req.cookies && req.cookies[cookieName] ) res.clearCookie(cookieName ,cookieSettings);
-      jwt.verify(refreshToken, refreshTokenSecret, (err, userTokenValue) => {
-        if(!err) refreshToken_List = refreshToken_List.filter(x => x.name !== userTokenValue.name);
+      jwt.verify(refreshToken, refreshTokenSecret, async(err, userTokenValue) => {
+        //if(!err) refreshToken_List = refreshToken_List.filter(x => x.name !== userTokenValue.name);
+        if(!err) await TokenModel.findOneAndDelete({name: userTokenValue.name});
+        
       });
     }catch(e){}
     
@@ -89,11 +105,16 @@ module.exports = loginRouter;
 function loginUserSuccess(user, res){ //cookie + accessToken and auth data for login
     const accessToken = generateAccessToken({ name: user.name, password:  user.password });
     const refreshToken = jwt.sign({ name: user.name, password:  user.password }, refreshTokenSecret, { expiresIn: refreshTokenTimeOut } );
-    refreshToken_List.push({name: user.name, token: refreshToken});// user_id: user._id.toHexString()
+    //refreshToken_List.push();// user_id: user._id.toHexString()
+    const data0 = {name: user.name, refreshToken: refreshToken};
+    const createdToken = new TokenModel(data0).save();
+    if (!createdToken) throw new Error();
     res.cookie(cookieName, refreshToken, cookieSettings); //change
     const data = JSON.parse(JSON.stringify(user));
     delete data.password;
     data.accessToken = 'Bearer ' + accessToken;
+    data.refreshToken = refreshToken;
+    console.log(JSON.stringify(data))
     return new Success(200, data);
 }
 

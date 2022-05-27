@@ -23,8 +23,6 @@ export const movieReducer = createSlice({
             try{(async() => { 
                 const movieListClone = JSON.stringify(movieList);
                  await AsyncStorage.setItem('@'+auth.name, movieListClone);
-    
-            //console.log(JSON.stringify(movieListJson))
             })(); }catch(e){};
             state.favorites = movieList;
         }
