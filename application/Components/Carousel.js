@@ -26,7 +26,7 @@ return (<Animated.FlatList
     return (<Box style={{ width: CONTAINER_WIDTH }}>
         <Animated.View style={{ marginHorizontal: TOP_SPACE, padding: TOP_SPACE, alignItems: "center",transform: [{translateY: scrollY}]}}>
           <Box style={[{ ...imageSizes }, {width: 'auto', height: '100%', zIndex: 5}]} >
-            <NativeButton onPress={() => {onPress ? onPress(item): null} }><Image alt={item.title} {...props}  source={{ uri: item.image }} style={styles.posterImage} /></NativeButton>
+            <NativeButton onPress={() => {onPress ? onPress(item): null} }><Image alt={item.title || 'Movie'} {...props}  source={{ uri: item.image }} style={styles.posterImage} /></NativeButton>
             {additionalBox ?  additionalBox(item): null}         
           </Box>
         </Animated.View>

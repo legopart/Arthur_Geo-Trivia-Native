@@ -9,7 +9,7 @@ const middlewares = require("./middlewares");
 
 const path = require("path");
 //app.use( require('helmet')() );
-app.use(require("cors")());
+app.use(require("cors")());     //Access-Control-Allow-Credentials: true
 app.use(require("cookie-parser")());
 
 app.use(express.json());
@@ -22,16 +22,16 @@ app.use(middlewares.globalErrorMainHandler);
 const routers = require("./routers");
 
 const public_folder = 'public_folder';
-app.use("/", express.static(path.join(__dirname, public_folder)));  //global folder
-app.route("/").get(async (req, res) => res.status(200).sendFile(path.join(__dirname, public_folder, "index.html")) );
-app.use("/api/login", routers.loginRouter); //verifyJWT set inside for not registration part!
+app.use("/menoraflix/", express.static(path.join(__dirname, public_folder)));  //global folder
+app.route("/menoraflix/").get(async (req, res) => res.status(200).sendFile(path.join(__dirname, public_folder, "index.html")) );
+app.use("/menoraflix/api/login", routers.loginRouter); //verifyJWT set inside for not registration part!
 
 // //if (process.env.NODE_ENV === 'production') 
 app.use(middlewares.verifyJWT); //403 //Token require middleware
 
 // //app.use("/api/user", routers.userRouter);
 
-app.use("/api/movie", routers.movieRouter);
+app.use("/menoraflix/api/movie", routers.movieRouter);
 
 app.route("*").all((req, res) => res.status(404) );
 app.use(middlewares.errorMainHandler); //errorHandler

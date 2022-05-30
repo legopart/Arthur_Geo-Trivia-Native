@@ -13,7 +13,6 @@ import {useRoute} from '@react-navigation/native';
 import { Axios } from '../../Api';
 
 
-
 export default function Login(){
 
   const route = useRoute(); //route.params
@@ -58,6 +57,7 @@ async function handlePressLogin(){
   await nameError('');
   await passwordError('');
 
+ 
   try{
       const data = {name: name, password: password};
       const result = await Axios('POST', '/api/login/', data, {});

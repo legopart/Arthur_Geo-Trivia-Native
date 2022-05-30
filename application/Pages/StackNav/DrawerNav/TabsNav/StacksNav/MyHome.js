@@ -30,10 +30,10 @@ export default function MyHome({ navigation }){
      
       try{
         (async() => {
-            await (async() => {
-              const movieList = await AsyncStorage.getItem('@'+auth.name);
-              if(movieList){ SetFavorites(JSON.parse(movieList)); }
-            })();
+            try{
+            const movieList = await AsyncStorage.getItem('@'+auth.name);
+            if(movieList){ SetFavorites(JSON.parse(movieList)); }
+            }catch(e){}
             await handleSetNewMovies();
             await handleSetTopMovies();
         })()
@@ -68,21 +68,20 @@ const render = () => (<>
 </>)
 
 async function handleSetNewMovies(){
-  let result;
   try{
-    result = await Axios('GET', '/api/movie/new', {}, {'authorization':  auth.accessToken});
+    const result = await Axios('GET', '/api/movie/new/', {}, {'authorization':  auth.accessToken});
     if(!result) throw new Error();
-  }catch(e){alert(e)}
-  setNewMovies(result);
+    setNewMovies(result);
+  }catch(e){alert(e);}
 }
 
 async function handleSetTopMovies(){
   let result;
   try{
-    result = await Axios('GET', '/api/movie/top', {}, {'authorization':  auth.accessToken});
+    result = await Axios('GET', '/api/movie/top/', {}, {'authorization':  auth.accessToken});
     if(!result) throw new Error();
     if(result && result[0]) setSelectedMovie(result[0]);
-  }catch(e){alert( e)}
+  }catch(e){alert(e);}
   setTopMovies(result);
 }
 

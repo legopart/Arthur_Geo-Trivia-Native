@@ -11,7 +11,7 @@ return (<Box style={{flexDirection: 'row', height: '100%'}}>
     <Center pt={4}><Text bold fontSize={'sm'} numberOfLines={3} ellipsizeMode={'tail'}>{movie.title}</Text></Center>
     <Box pb={2} pl={1} style={{flex: 1, justifyContent: 'center'}}>
       <Text numberOfLines={1} ellipsizeMode={'tail'}>Year: {movie.year}</Text>
-      <Text numberOfLines={1} ellipsizeMode={'tail'}>imdbID: {movie.id}</Text>
+      <Text numberOfLines={2} ellipsizeMode={'tail'}>imdbID: {movie.id}</Text>
       <Text numberOfLines={1} ellipsizeMode={'tail'}>Type: {movie.type}</Text>
     </Box>
   </Box>

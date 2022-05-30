@@ -29,13 +29,13 @@ export default function Favorites({navigation}){
 const render = () => (<>
 <PageContainer topCorners>
     <Box><Text>Favorites</Text></Box>
-    <ScrollView>
+    <ScrollView  style={{ minHeight: WINDOW_HEIGHT*0.84}}>
         <StatusBar style="auto" backgroundColor={isFocused ? '#E40412': null} />
-            <Box>
-             <Box style={{padding: 2}}>{
+            <Box style={{flex: 1}}>
+             <Box style={{flex: 1, padding: 2}}>{
                  !favorites ? 'Empty' :
                 favorites.map((movie) =>
-                    <Box key={movie.id} style={{ height: (WINDOW_HEIGHT*0.84)/ 2.40  ,minHeight: 240, flex: 1}}>
+                    <Box key={movie.id} style={{ height: (WINDOW_HEIGHT*0.84)/ 2.40  ,minHeight: 220, flex: 1}}>
                         <Box><Text numberOfLines={1}>{movie.title}</Text></Box>
                         <Box style={{flex: 1 ,maxHeight: '90%'}}><MovieCard movie={movie}/></Box>
                     </Box>

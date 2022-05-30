@@ -35,9 +35,9 @@ return (<>
 
 
 function StackNav() {
-  const auth = useSelectorAuth();
+  const { auth } = useSelectorAuth();
 const render = () => (<>
-  { auth.auth?.name ? <DrawerNav /> :
+  { auth?.name ? <DrawerNav /> :
     <Stack.Navigator  screenOptions={{ headerShown: false }}>
       <Stack.Screen name='Login' options={{ }}  component={Login}/>
       <Stack.Screen name='Register' options={{ }}  component={Register}/>

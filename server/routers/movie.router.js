@@ -50,18 +50,21 @@ module.exports = movieRouter;
 const fetch = require('node-fetch');
 
 async function getMovieDataById(imdbId){
+    console.log('getMovieDataById')
     try{
         const api = `${OMDBApi}/?i=${imdbId}&apikey=${OMDBToken}`;
         const result = await fetch(api, { method: "GET" });
         const resultJson = await result.json();
         if(resultJson.response === 'False') throw new Error();
         const { Title, Year, Type, Poster, imdbID } = resultJson;
+        if(Title.trim() === '' || Year.trim() === '' || Type.trim() ==='' || Poster.trim() === '' || imdbID.trim() === '') throw new Error();
         const data = { id: imdbID, title: Title, year: Year, type: Type, image: Poster};
         return data;
     }catch(e){return undefined};
 }
 
 async function mostPopular10Movies(){
+    console.log('boxOffice10Movies')
     const api = `${IMDBApi}/MostPopularMovies/${IMDBToken}`;
     const result = await fetch(api, { method: "GET" });
     const resultJson = await result.json();
@@ -85,6 +88,7 @@ async function mostPopular10Movies(){
     return data;
 }
 async function boxOffice10Movies(){
+    console.log('boxOffice10Movies')
     const api = `${IMDBApi}/BoxOffice/${IMDBToken}`;
     const result = await fetch(api, { method: "GET" });
     const resultJson = await result.json();

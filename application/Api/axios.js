@@ -5,9 +5,9 @@ const axiosBaseUrl = server.AXIOS_BASE_URL;
 
 const axiosFunction = axios.create({
     baseURL: axiosBaseUrl
-    , headers: {'Content-Type': 'application/json',}
-    , withCredentials: true
-    //, timeout: 1000
+    , headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Credentials':true}
+    // , withCredentials: true
+    , timeout: 0
 });
 
 export default async function Axios(method, additionUrl, data, additionHeader){
@@ -25,8 +25,6 @@ export default async function Axios(method, additionUrl, data, additionHeader){
         if(!error.response?.data) throw 'no server connection' ;
         if(Number(error.response?.status) > 460)  throw error.response; //modified errors
         throw error.response?.data;
-        
-
     }
 }
 

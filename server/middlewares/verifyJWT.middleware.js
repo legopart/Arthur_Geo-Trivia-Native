@@ -19,7 +19,7 @@ module.exports = function (req, res, next) {
         if(!user) return next( new MiddlewareError(403, 'token middleware error, no found user for this token', 'No user found for this token, No Access.') )
         req.user = user;  //console.log(userTokenValues);
         //return next( new MiddlewareError(403, '~~~', 'customize error') ); 
-        next();
+        return next();
       }
     );
     } catch(e){ return next( new MiddlewareError(500, 'token middleware error, token system fail', 'token system fail') ); }

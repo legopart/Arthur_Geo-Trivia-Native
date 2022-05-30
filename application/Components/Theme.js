@@ -33,9 +33,11 @@ colors: {
     }
 }
 , fonts: {
-  heading: 'Roboto',
-  body: 'Roboto',
-  mono: 'Roboto',
+
+
+  //   heading: 'Roboto',
+  // body: 'Roboto',
+  // mono: 'Roboto',
 }
 , letterSpacings: {
   xs: "-0.04em",
