@@ -8,6 +8,7 @@ import { MainPageContainer, PageContainer, Input } from '../../Components';
 import {useGoBack, useGoTo, useNavigation} from '../../Hooks';
 import backgroundImage  from '../../assets/background.png'
 import { useAuthDispatch, useSelectorAuth } from '../../reducers';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Axios } from '../../Api';
 
@@ -27,7 +28,7 @@ export default function Register(){
         await nameRef.current.setValue(name);
         await passwordRef.current.setValue(password);
       })()
-    } else nameRef.current?.focus();
+    } //else nameRef.current?.focus();
     
   }, [])
 
@@ -63,6 +64,7 @@ async function handlePressRegister(){
       const data = {name: name, password: password};
       const result = await Axios('POST', '/api/login/register', data, {});
       if(!result) throw 'Registration fail!';
+      try{ await AsyncStorage.setItem('@registered', 'true'); }catch(e){  }
       goTo('Login', data);
   }catch(e){ 
     if (e.status === 472) nameError(e.data);

@@ -25,13 +25,14 @@ export default function Login(){
 
   useEffect(()=>{
     // checkAccessToken();
-    if(route.params){
+    (async() =>{
+    await checkIfRegistered();
+    await (async() =>{if(route.params){
       const {name, password} = route.params;
-      (async() =>{
         await nameRef.current.setValue(name);
         await passwordRef.current.setValue(password);
-      })()
-    }
+    } })()
+    })()
    // else nameRef.current?.focus();
   }, []);
 
@@ -62,6 +63,7 @@ async function handlePressLogin(){
       const data = {name: name, password: password};
       const result = await Axios('POST', '/api/login/', data, {});
       if(!result) throw 'Login fail!';
+      try{ await AsyncStorage.setItem('@registered', 'true'); }catch(e){  }
       SetAuth(result);
   }catch(e){ 
     if (e.status === 472) nameError(e.data);
@@ -70,18 +72,26 @@ async function handlePressLogin(){
   }
 }
 
+
+async function checkIfRegistered(){
+  try{  
+      const isRegistered = await AsyncStorage.getItem('@registered');
+      
+      if(!isRegistered) {
+        await AsyncStorage.setItem('@registered', 'attempt');
+        await (async() => goTo('Register'))();}
+  }catch(e){  }
+}
+
+
 async function checkAccessToken(){
   try{
-        
       const refreshToken = await AsyncStorage.getItem('@token');
       if(!refreshToken) return;
       const data = {token: refreshToken};
       const result = await Axios('PATCH', '/api/login/', data, {});
       if(!result) return;
       SetAuth(result);
-
-  
-
   }catch(e){  }
 }
 

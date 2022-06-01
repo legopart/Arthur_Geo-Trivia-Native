@@ -82,8 +82,6 @@ loginRouter.route('/') //  /api/login
   errorHandler(req, res, next)( async () => {
     try{
       const refreshToken = ( req.cookies && req.cookies[cookieName]) || req.headers['authorization'] || req.header['x-auth-token'] || req.body['token'] || req.query['token'];
-      console.log(refreshToken)
-      console.log(refreshToken)
       if(!refreshToken) return new Success(200);
       if( req.cookies && req.cookies[cookieName] ) res.clearCookie(cookieName ,cookieSettings);
       jwt.verify(refreshToken, refreshTokenSecret, async(err, userTokenValue) => {
