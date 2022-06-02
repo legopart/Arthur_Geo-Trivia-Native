@@ -1,4 +1,5 @@
 {
   "name": "FINAL_REACT_NATIVE",
-  "packageManager": "yarn@3.2.1"
+  "packageManager": "yarn@3.2.1",
+    "license": "MIT"
 }

@@ -45,6 +45,7 @@ const render = () => (<PageContainer index statusBar><ImageBackground source={ba
     <Button ref={buttonRef} onPress={ handlePressLogin } style={{marginTop: 35}}>Login</Button>
     <Box><Text>{errorMessage}</Text></Box>
     <Box><Text onPress={ handlePressRegister }>First time here?, <Text bold>Sign In</Text></Text></Box>
+    <Box><Text>for interview: name: <Text bold>abc</Text> pass: <Text bold>123</Text>  </Text></Box>
   </ScrollView>
 </ImageBackground></PageContainer>)
 

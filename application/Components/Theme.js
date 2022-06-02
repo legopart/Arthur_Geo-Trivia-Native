@@ -96,9 +96,6 @@ const globalStyles = StyleSheet.create({
     , paddingTop: 0 // for Expo status bar  Platform.OS == "android" ? StatusBarAndroid.currentHeight : 0
     , maxWidth: 560 //pc develop fix
   }
-  , preContainer: { flex: 1 }
-  , container: { flex: 1 }
-  , scrollView: { }
 });
 
 
@@ -107,7 +104,7 @@ const PageContainerStyle = StyleSheet.create({
 
   ,containerIndex: {  //index page only!
     flex: 1 
-    ,backgroundColor: '#010101'
+   , backgroundColor: '#010101'
    , justifyContent: 'center'
    , borderRadius: 12
   }
@@ -115,7 +112,7 @@ const PageContainerStyle = StyleSheet.create({
   ,containerRegular: { 
     flex: 1
     //, borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 2,  borderColor: '#E40412'
-    , backgroundColor: '#010101'
+     , backgroundColor: '#010101'
     , justifyContent: 'center'
     , padding: 3
     //, alignItems: 'center'
