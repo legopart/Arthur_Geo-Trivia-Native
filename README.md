@@ -1,7 +1,5 @@
-# MenoraFlix
-please run the server with the application.
-server port is 3500
-in addition this application using external mongoDB database in atlas
-this application build for phone emulator
-![alt text](https://i.imgur.com/Xbsu0Jd.png)
+# Geo Trivia Native
+Important!, please pre install for expo https://docs.expo.dev/development/build/
+require for android version
+![alt text](https://i.imgur.com/RxQ4Q36.png)
 
