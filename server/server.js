@@ -31,8 +31,6 @@ app.use(middlewares.verifyJWT); //403 //Token require middleware
 
 // //app.use("/api/user", routers.userRouter);
 
-app.use("/menoraflix/api/movie", routers.movieRouter);
-
 app.route("*").all((req, res) => res.status(404) );
 app.use(middlewares.errorMainHandler); //errorHandler
 const port = developerPort || serverPort || 3500;
