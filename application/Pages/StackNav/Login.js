@@ -36,18 +36,16 @@ export default function Login(){
    // else nameRef.current?.focus();
   }, []);
 
-const render = () => (<PageContainer index statusBar><ImageBackground source={backgroundImage} resizeMode="cover" style={{justifyContent: "space-around", flex: 1, padding: 20}} imageStyle={{ borderRadius: 12}}>
-  <ScrollView>
-    <Heading style={{marginVertical: 30}} size={'3xl'}>Menora Flix</Heading>
-    <Text style={{marginVertical: 7}} fontSize='3xl'>Login</Text>
+const render = () => (<PageContainer statusBar title='Login'>
+  
     <Input ref={nameRef} label="username" />
     <Input ref={passwordRef} label="password" type="password" />
     <Button ref={buttonRef} onPress={ handlePressLogin } style={{marginTop: 35}}>Login</Button>
     <Box><Text>{errorMessage}</Text></Box>
     <Box><Text onPress={ handlePressRegister }>First time here?, <Text bold>Sign In</Text></Text></Box>
     <Box><Text>for interviewer: name: <Text bold>abc</Text> pass: <Text bold>123</Text>  </Text></Box>
-  </ScrollView>
-</ImageBackground></PageContainer>)
+
+</PageContainer>)
 
 async function handlePressLogin(){
   const name = nameRef.current.getValue();

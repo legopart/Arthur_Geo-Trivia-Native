@@ -7,10 +7,10 @@ import { useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-import { MainPageContainer, PageContainer, Input, Carousel, MovieCard } from '../../../../../Components';
-import {useGoBack, useGoTo, useNavigation} from '../../../../../Hooks';
-import { useAuthDispatch, useSelectorAuth, useSelectorMovies, useMovieDispatch } from '../../../../../reducers';
-import { Axios } from '../../../../../Api';
+import { MainPageContainer, PageContainer, Input, Carousel, MovieCard } from '../../Components';
+import {useGoBack, useGoTo, useNavigation} from '../../Hooks';
+import { useAuthDispatch, useSelectorAuth, useSelectorMovies, useMovieDispatch } from '../../reducers';
+import { Axios } from '../../Api';
 
 
 //const WINDOW_HEIGHT = Dimensions.get("window").height;

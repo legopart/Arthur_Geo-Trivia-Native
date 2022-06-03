@@ -5,31 +5,31 @@ import {LinearGradient} from 'expo-linear-gradient';
 
 const globalTheme = extendTheme({
 colors: {
-    red: { 600: '#F40000' }
+    red: { 600: '#FFA500' }
 }
 ,components: {
     Button: {
         baseStyle: {
-        rounded: "full" //3xl
+        rounded: 10 //3xl
         , margin: 1
-        , fontWeight: 'xl'
+        , fontWeight: '2xl'
         }
         , defaultProps: {
         colorScheme: "red" //#F40000
-        , _text:{color: '#ffffff'}
+        , _text:{color: '#211500'}
         }
     }
     , Text: {
-        defaultProps: { color: '#ffffff' }
+        defaultProps: { color: '#000000' }
         , baseStyle: {  marginLeft: 1, marginRight: 1 }
     }
     , Input: {
-        defaultProps: { color: '#ffffff' }
+        defaultProps: { color: '#000000' }
         , baseStyle: { }
     }
     , Heading: {
-        defaultProps: { color: '#E40412' }
-        , baseStyle: { marginLeft: 'auto', marginRight: 'auto' }
+        defaultProps: { color: '#6C059C' }
+        , baseStyle: { marginLeft: 'auto', marginRight: 'auto', paddingTop: 3, paddingBottom: 2  }
     }
 }
 , fonts: {
@@ -92,7 +92,7 @@ colors: {
 
 const globalStyles = StyleSheet.create({
   globalContainer: {
-    flex: 1, backgroundColor: '#E40412' 
+    flex: 1, backgroundColor: '#6C059C' 
     , paddingTop: 0 // for Expo status bar  Platform.OS == "android" ? StatusBarAndroid.currentHeight : 0
     , maxWidth: 560 //pc develop fix
   }
@@ -100,11 +100,11 @@ const globalStyles = StyleSheet.create({
 
 
 const PageContainerStyle = StyleSheet.create({
-  preContainer: {flex: 1 ,backgroundColor: '#E40412' }
+  preContainer: {flex: 1 ,backgroundColor: '#6C059C' }
 
   ,containerIndex: {  //index page only!
     flex: 1 
-   , backgroundColor: '#010101'
+    , backgroundColor: 'white'
    , justifyContent: 'center'
    , borderRadius: 12
   }
@@ -112,16 +112,18 @@ const PageContainerStyle = StyleSheet.create({
   ,containerRegular: { 
     flex: 1
     //, borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 2,  borderColor: '#E40412'
-     , backgroundColor: '#010101'
+     , backgroundColor: 'white'
     , justifyContent: 'center'
-    , padding: 3
+    //, padding: 3
     //, alignItems: 'center'
+    , borderRadius: 12
   }
 
 
   ,containerTopRadius: { 
-    borderTopStartRadius: 12
-    , borderTopEndRadius: 12
+    // borderTopStartRadius: 12
+    // , borderTopEndRadius: 12
+    
   }
 
 });

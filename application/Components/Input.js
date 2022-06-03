@@ -19,11 +19,14 @@ const Input = forwardRef( ({ onChangeText, value : externalValue, leftIcon, righ
 return (<>
 <Box style={styleInput.box}>
 <FormControl.Label onPress={handleFocus} style={ styleInput.label }><Text onPress={ handleFocus } style={styleInput.labelText}>{label}</Text></FormControl.Label>
-<Box ml={3} mr={4} mb={2}>
+<Box ml={1} mr={2} mb={2}>
   <Box style={leftIcon || rightButton ? { flexDirection: 'row', alignItems: 'center' } : { minWidth: '50%',alignItems: 'center'}}>
     {leftIcon ? <Box style={{marginRight: 2}}>{leftIcon}</Box> : null}
     <Box style={leftIcon || rightButton ? {flex: 1} : {width: '100%', minHeight: 30}}>
-      <BaseInput  selectionColor={'#f1f1f1'} style={{ ...styleInput.input , ...style}} variant="unstyled" placeholderTextColor={'#a1a1a1'} value={value} size='2xl' {...props}  placeholder={placeholder}  onChangeText={async(e) => {/*await*/ setValue(e); await onChangeText&&onChangeText(); setErrorMessage('')}} returnKeyType={onSubmit ?'next': 'done'} onSubmitEditing={onSubmit} ref={textInputRef} />
+
+      <BaseInput selectionColor={'#0000ff'} style={{ ...styleInput.input , ...style}}  placeholderTextColor={'#8C6E00'} 
+      value={value} size='2xl' {...props}  placeholder={placeholder}  onChangeText={async(e) => {/*await*/ setValue(e); await onChangeText&&onChangeText(); setErrorMessage('')}} returnKeyType={onSubmit ?'next': 'done'} onSubmitEditing={onSubmit} ref={textInputRef} />
+      
     </Box>
     {rightButton ? <Box style={{marginLeft: 8,height: '100px'}}>{rightButton}</Box>: null}
 </Box>
@@ -36,9 +39,9 @@ return (<>
 export default Input;
 
 const styleInput = StyleSheet.create({
-box: {marginVertical: 12, backgroundColor: '#333333', height: 60}
+box: {marginVertical: 12, height: 60}
 , label: { marginLeft: 10, marginTop: -5, position: 'absolute', top: 5, left: 5, zIndex: 1}
-, labelText: {color: '#737373'}
-, input:{ textAlign: 'center', backgroundColor: '#333333', height: 60}
+, labelText: {color: '#9A376B'}
+, input:{ textAlign: 'center', backgroundColor: '#ffffff', height: 60}
 //, placeholder: {textAlign: 'left'}
 });

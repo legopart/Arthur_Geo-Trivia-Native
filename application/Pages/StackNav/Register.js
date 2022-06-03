@@ -32,10 +32,8 @@ export default function Register(){
     
   }, [])
 
-const render = () => (<PageContainer index statusBar><ImageBackground source={backgroundImage} resizeMode="cover" style={{justifyContent: "space-around", flex: 1, padding: 20}} imageStyle={{ borderRadius: 12}}>
+const render = () => (<PageContainer statusBar title='Sign In'>
     <ScrollView>
-      <Heading style={{marginVertical: 30}} size={'3xl'}>Menora Flix</Heading>
-      <Text style={{marginVertical: 7}} fontSize='3xl'>Register</Text>
       <Input ref={nameRef} label="username" onSubmit={() => passwordRef.current?.focus()} />
       <Input ref={passwordRef} label="password" type="password" onSubmit={() => password2Ref.current?.focus()} />
       <Input ref={password2Ref} label="password approve" type="password" onSubmit={() => buttonRef.current?.focus()} />
@@ -43,7 +41,7 @@ const render = () => (<PageContainer index statusBar><ImageBackground source={ba
       <Box><Text>{errorMessage}</Text></Box>
       <Box><Text onPress={ handlePressLogin }>Having a user?, <Text bold>Login</Text></Text></Box>
   </ScrollView>
-</ImageBackground></PageContainer>)
+</PageContainer>)
 
 async function handlePressRegister(){
   const name = nameRef.current.getValue();
